@@ -49,7 +49,7 @@ This repository contains curated learning resources and career pathways to devel
 - **`categories.csv`** - Technology categories and groupings
 - **`platforms.csv`** - Learning platforms reference
 
-See [Learning Paths](learning-paths.md) for detailed descriptions of all available career paths.
+See [Learning Paths](LEARNING.md) for detailed descriptions of all available career paths.
 
 ## Technology Stack Covered
 
