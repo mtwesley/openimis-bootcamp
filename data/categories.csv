@@ -1,0 +1,42 @@
+group_title,group,category_title,category
+Foundational Knowledge,literacy,Computer Literacy,computer
+Foundational Knowledge,literacy,Internet Literacy,internet
+Programming Languages,code,Python,python
+Programming Languages,code,JavaScript,javascript
+Programming Languages,code,HTML,html
+Programming Languages,code,CSS,css
+Frameworks,framework,Django,django
+Frameworks,framework,Node.js,nodejs
+Frameworks,framework,React,react
+Frameworks,framework,Redux,redux
+Frameworks,framework,Material-UI,mui
+Development Environment,dev,Bash,bash
+Development Environment,dev,Linux,linux
+Development Environment,dev,Environment Variables,variable
+Development Environment,dev,IDE,ide
+Data Management,data,SQL,sql
+Data Management,data,PostgreSQL,postgresql
+Data Management,data,Databases,database
+Data Management,data,JSON,json
+Data Management,data,CSV,csv
+APIs & Integration,api,REST,rest
+APIs & Integration,api,APIs,api
+APIs & Integration,api,GraphQL,graphql
+Security,security,Web Security,security
+Security,security,Authentication,auth
+Security,security,CSRF,csrf
+DevOps,devops,Docker,docker
+DevOps,devops,CI/CD,ci_cd
+Web Servers,server,NGINX,nginx
+Quality Assurance,qa,Testing,testing
+Quality Assurance,qa,QA,qa
+Project Management,pm,Agile/Scrum,agile
+Project Management,pm,Product Management,product
+Tools,tool,Git,git
+Tools,tool,GitHub,github
+Tools,tool,Figma,figma
+Tools,tool,VSCode,vscode
+Tools,tool,NPM,npm
+Tools,tool,Yarn,yarn
+Tools,tool,Webpack,webpack
+Design,design,UI/UX,ui_ux

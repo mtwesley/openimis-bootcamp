@@ -1,0 +1,74 @@
+path_title,path,rank,step_title,step,categories
+Computers and the Internet Foundations,computer_internet_foundations,0,Computer Basics,computer_basics,"computer,internet"
+Computers and the Internet Foundations,computer_internet_foundations,1,Development Environment,development_environment,"ide,vscode"
+Web Development Foundations,web_dev_foundations,0,Development Environment,development_environment,"ide,vscode"
+Web Development Foundations,web_dev_foundations,1,Markup and Styling,markup_styling,"html,css"
+Web Development Foundations,web_dev_foundations,2,Data Formats,data_formats,"json,csv"
+Web Development Foundations,web_dev_foundations,3,Version Control,version_control,"git,github"
+Frontend Developer,frontend_developer,0,Version Control,version_control,"git,github"
+Frontend Developer,frontend_developer,1,Markup and Styling,markup_styling,"html,css"
+Frontend Developer,frontend_developer,2,Client Programming,client_programming,javascript
+Frontend Developer,frontend_developer,3,Data Formats,data_formats,json
+Frontend Developer,frontend_developer,4,Frontend Framework,frontend_framework,react
+Frontend Developer,frontend_developer,5,State Management,state_management,redux
+Frontend Developer,frontend_developer,6,UI Libraries,ui_libraries,mui
+Frontend Developer,frontend_developer,7,Build Tools,build_tools,webpack
+Frontend Developer,frontend_developer,8,Package Management,package_management,"npm,yarn"
+UI/UX Designer,uiux_designer,0,Design Principles,design_principles,ui_ux
+UI/UX Designer,uiux_designer,1,Design Tools,design_tools,figma
+UI/UX Designer,uiux_designer,2,Markup and Styling,markup_styling,"html,css"
+Backend Developer,backend_developer,0,Version Control,version_control,"git,github"
+Backend Developer,backend_developer,1,Server Programming,server_programming,python
+Backend Developer,backend_developer,2,Web Framework,web_framework,django
+Backend Developer,backend_developer,3,Server Runtime,server_runtime,nodejs
+Backend Developer,backend_developer,4,Package Management,package_management,"npm,yarn"
+Backend Developer,backend_developer,5,Database Management,database_management,"sql,postgresql"
+Backend Developer,backend_developer,6,Data Formats,data_formats,"json,csv"
+Backend Developer,backend_developer,7,API Development,api_development,"rest,api,graphql"
+Backend Developer,backend_developer,8,Authentication,authentication,auth
+API Developer,api_developer,0,Version Control,version_control,"git,github"
+API Developer,api_developer,1,Server Programming,server_programming,python
+API Developer,api_developer,2,Server Runtime,server_runtime,nodejs
+API Developer,api_developer,3,Package Management,package_management,"npm,yarn"
+API Developer,api_developer,4,Data Formats,data_formats,"json,csv"
+API Developer,api_developer,5,REST APIs,rest_apis,"rest,api"
+API Developer,api_developer,6,Advanced APIs,advanced_apis,graphql
+API Developer,api_developer,7,Database Integration,database_integration,sql
+API Developer,api_developer,8,Authentication,authentication,auth
+Database Developer,database_developer,0,Version Control,version_control,"git,github"
+Database Developer,database_developer,1,SQL Fundamentals,sql_fundamentals,sql
+Database Developer,database_developer,2,Database Platform,database_platform,postgresql
+Database Developer,database_developer,3,Database Design,database_design,database
+Database Developer,database_developer,4,Programming Integration,programming_integration,python
+Full-Stack Developer,fullstack_developer,0,Version Control,version_control,"git,github"
+Full-Stack Developer,fullstack_developer,1,Markup and Styling,markup_styling,"html,css"
+Full-Stack Developer,fullstack_developer,2,Client Programming,client_programming,javascript
+Full-Stack Developer,fullstack_developer,3,Data Formats,data_formats,"json,csv"
+Full-Stack Developer,fullstack_developer,4,Frontend Framework,frontend_framework,react
+Full-Stack Developer,fullstack_developer,5,State Management,state_management,redux
+Full-Stack Developer,fullstack_developer,6,Build Tools,build_tools,webpack
+Full-Stack Developer,fullstack_developer,7,Server Programming,server_programming,python
+Full-Stack Developer,fullstack_developer,8,Web Framework,web_framework,django
+Full-Stack Developer,fullstack_developer,9,Server Runtime,server_runtime,nodejs
+Full-Stack Developer,fullstack_developer,10,Database Management,database_management,"sql,postgresql"
+Full-Stack Developer,fullstack_developer,11,API Development,api_development,"rest,api,graphql"
+Full-Stack Developer,fullstack_developer,12,Package Management,package_management,"npm,yarn"
+DevOps Engineer,devops_engineer,0,Version Control,version_control,"git,github"
+DevOps Engineer,devops_engineer,1,System Administration,system_administration,"linux,bash"
+DevOps Engineer,devops_engineer,2,Environment Configuration,environment_configuration,variable
+DevOps Engineer,devops_engineer,3,Web Server,web_server,nginx
+DevOps Engineer,devops_engineer,4,Containerization,containerization,docker
+DevOps Engineer,devops_engineer,5,CI/CD Pipeline,cicd_pipeline,ci_cd
+DevOps Engineer,devops_engineer,6,Security Implementation,security_implementation,security
+Security Engineer,security_engineer,0,Version Control,version_control,"git,github"
+Security Engineer,security_engineer,1,Security Fundamentals,security_fundamentals,security
+Security Engineer,security_engineer,2,Authentication Systems,authentication_systems,auth
+Security Engineer,security_engineer,3,Web Security,web_security,csrf
+Security Engineer,security_engineer,4,DevSecOps Integration,devsecops_integration,"ci_cd,security"
+Security Engineer,security_engineer,5,System Security,system_security,"linux,bash"
+QA Engineer,qa_engineer,0,Version Control,version_control,"git,github"
+QA Engineer,qa_engineer,1,Web Technologies,web_technologies,"html,css,javascript"
+QA Engineer,qa_engineer,2,Data Formats,data_formats,"json,csv"
+QA Engineer,qa_engineer,3,Testing Fundamentals,testing_fundamentals,"testing,qa"
+QA Engineer,qa_engineer,4,Programming for Testing,programming_testing,"python,testing"
+QA Engineer,qa_engineer,5,Frontend Testing,frontend_testing,"react,testing"
