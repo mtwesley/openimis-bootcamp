@@ -33,30 +33,42 @@ const HomePage: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-center mb-16">
         <Link to="/resources" className="bg-card-background p-6 rounded-lg shadow-lg cursor-pointer transform hover:-translate-y-1 transition-transform">
           <i className={`fas fa-book text-4xl ${getIconColor('fas fa-book')} mb-4`}></i>
-          <h3 className="text-2xl font-bold">{resources.length}+ Resources</h3>
-          <p className="text-gray-600 dark:text-gray-400">Curated from top platforms.</p>
+          <h3 className="text-2xl font-bold">200+ Resources</h3>
+          <p className="text-gray-600 dark:text-gray-400">Curated from top platforms</p>
         </Link>
         <Link to="/paths" className="bg-card-background p-6 rounded-lg shadow-lg cursor-pointer transform hover:-translate-y-1 transition-transform">
           <i className={`fas fa-road text-4xl ${getIconColor('fas fa-road')} mb-4`}></i>
-          <h3 className="text-2xl font-bold">{paths.length} Career Paths</h3>
-          <p className="text-gray-600 dark:text-gray-400">From frontend to DevOps.</p>
+          <h3 className="text-2xl font-bold">10+ Paths</h3>
+          <p className="text-gray-600 dark:text-gray-400">To advance your career</p>
         </Link>
         <Link to="/categories" className="bg-card-background p-6 rounded-lg shadow-lg cursor-pointer transform hover:-translate-y-1 transition-transform">
           <i className={`fas fa-tags text-4xl ${getIconColor('fas fa-tags')} mb-4`}></i>
-          <h3 className="text-2xl font-bold">{categories.length} Categories</h3>
-          <p className="text-gray-600 dark:text-gray-400">Organized by topic.</p>
+          <h3 className="text-2xl font-bold">40+ Categories</h3>
+          <p className="text-gray-600 dark:text-gray-400">Organized by topic</p>
         </Link>
         <div className="bg-card-background p-6 rounded-lg shadow-lg md:col-span-2 lg:col-span-1 mx-auto w-full max-w-sm lg:max-w-none">
           <i className={`fas fa-layer-group text-4xl ${getIconColor('fas fa-layer-group')} mb-4`}></i>
           <h3 className="text-2xl font-bold">3 Skill Levels</h3>
-          <p className="text-gray-600 dark:text-gray-400">Beginner to Advanced.</p>
+          <p className="text-gray-600 dark:text-gray-400">Beginner to Advanced</p>
         </div>
       </div>
 
       <div className="mb-16">
+        <h2 className="text-3xl font-bold text-center mb-8">Popular Learning Paths</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {['fullstack_developer', 'uiux_designer', 'database_administrator'].map(pathId => {
+            const path = paths.find(p => p.id === pathId);
+            return path ? <PathCard key={path.id} path={path} /> : null;
+          })}
+        </div>
+      </div>
+
+      <div>
         <h2 className="text-3xl font-bold text-center mb-8">Popular Categories</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {categories.slice(0, 6).map(category => {
+          {['python', 'django', 'git', 'javascript', 'react', 'docker'].map(catId => {
+            const category = categories.find(c => c.id === catId);
+            if (!category) return null;
             const resourceCount = resources.filter(r => 
               Array.isArray(r.category) ? r.category.includes(category.id) : r.category === category.id
             ).length;
@@ -64,15 +76,6 @@ const HomePage: React.FC = () => {
               <CategoryCard key={category.id} category={category} resourceCount={resourceCount} />
             );
           })}
-        </div>
-      </div>
-
-      <div>
-        <h2 className="text-3xl font-bold text-center mb-8">Popular Learning Paths</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {paths.slice(0, 3).map(path => (
-            <PathCard key={path.id} path={path} />
-          ))}
         </div>
       </div>
     </div>

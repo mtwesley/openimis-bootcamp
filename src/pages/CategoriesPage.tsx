@@ -52,20 +52,28 @@ const CategoriesPage: React.FC = () => {
         </div>
       </div>
 
-      {Object.entries(groupedCategories).sort(([a], [b]) => a.localeCompare(b)).map(([groupTitle, cats]) => (
-        <div key={groupTitle} className="mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">{groupTitle}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {cats.map(category => (
-              <CategoryCard
-                key={category.id}
-                category={category}
-                resourceCount={categoryResourceCounts[category.id] || 0}
-              />
-            ))}
+      {Object.entries(groupedCategories).sort(([a], [b]) => a.localeCompare(b)).map(([groupTitle, cats]) => {
+        // Filter out categories with zero resources at current difficulty
+        const visibleCategories = cats.filter(cat => (categoryResourceCounts[cat.id] || 0) > 0);
+        
+        // Only render the group if it has visible categories
+        if (visibleCategories.length === 0) return null;
+        
+        return (
+          <div key={groupTitle} className="mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">{groupTitle}</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {visibleCategories.map(category => (
+                <CategoryCard
+                  key={category.id}
+                  category={category}
+                  resourceCount={categoryResourceCounts[category.id] || 0}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };
