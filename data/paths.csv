@@ -35,11 +35,11 @@ API Developer,api_developer,5,REST APIs,rest_apis,"rest,api"
 API Developer,api_developer,6,Advanced APIs,advanced_apis,graphql
 API Developer,api_developer,7,Database Integration,database_integration,sql
 API Developer,api_developer,8,Authentication,authentication,auth
-Database Developer,database_developer,0,Version Control,version_control,"git,github"
-Database Developer,database_developer,1,SQL Fundamentals,sql_fundamentals,sql
-Database Developer,database_developer,2,Database Platform,database_platform,postgresql
-Database Developer,database_developer,3,Database Design,database_design,database
-Database Developer,database_developer,4,Programming Integration,programming_integration,python
+Database Administrator,database_administrator,0,Version Control,version_control,"git,github"
+Database Administrator,database_administrator,1,SQL Fundamentals,sql_fundamentals,sql
+Database Administrator,database_administrator,2,Database Platform,database_platform,postgresql
+Database Administrator,database_administrator,3,Database Design,database_design,database
+Database Administrator,database_administrator,4,Programming Integration,programming_integration,python
 Full-Stack Developer,fullstack_developer,0,Version Control,version_control,"git,github"
 Full-Stack Developer,fullstack_developer,1,Markup and Styling,markup_styling,"html,css"
 Full-Stack Developer,fullstack_developer,2,Client Programming,client_programming,javascript
