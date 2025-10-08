@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenIMIS Bootcamp</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #3b82f6;
+      --secondary-color: #1e40af;
+      --background-color: #f3f4f6;
+      --text-color: #111827;
+      --card-background: #ffffff;
+      --border-color: #e5e7eb;
+    }
+
+    html.dark {
+      --primary-color: #60a5fa;
+      --secondary-color: #93c5fd;
+      --background-color: #111827;
+      --text-color: #f9fafb;
+      --card-background: #1f2937;
+      --border-color: #374151;
+    }
+
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: 11px;
+      top: 28px;
+      bottom: -28px;
+      width: 2px;
+      background-color: var(--border-color);
+    }
+
+    .timeline-item:last-child::before {
+      display: none;
+    }
+
+    .step-circle {
+      background-color: var(--background-color);
+      border: 2px solid var(--border-color);
+    }
+
+    .step-circle.active {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    .step-circle.completed {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      color: white;
+    }
+
+    /* Custom scrollbar for better dark mode experience */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--border-color);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    // --- DATA CONTEXT & STATE MANAGEMENT ---
+    const DataContext = React.createContext();
+    const ProgressContext = React.createContext();
+    const AppStateContext = React.createContext();
+
+    // --- COMPLETE PROCESSED DATA ---
+    const APP_DATA = {
+      "platforms": [{ "id": "gcfglobal", "title": "GCFGlobal" }, { "id": "edx", "title": "edX" }, { "id": "codecademy", "title": "Codecademy" }, { "id": "odinproject", "title": "Odin Project" }, { "id": "freecodecamp", "title": "FreeCodeCamp" }, { "id": "appacademy", "title": "App Academy Open" }, { "id": "youtube", "title": "YouTube" }],
+      "categories": [{ "id": "computer", "title": "Computer Literacy", "group": "literacy", "group_title": "Foundational Knowledge" }, { "id": "internet", "title": "Internet Literacy", "group": "literacy", "group_title": "Foundational Knowledge" }, { "id": "python", "title": "Python", "group": "code", "group_title": "Programming Languages" }, { "id": "javascript", "title": "JavaScript", "group": "code", "group_title": "Programming Languages" }, { "id": "html", "title": "HTML", "group": "code", "group_title": "Programming Languages" }, { "id": "css", "title": "CSS", "group": "code", "group_title": "Programming Languages" }, { "id": "django", "title": "Django", "group": "framework", "group_title": "Frameworks" }, { "id": "react", "title": "React", "group": "framework", "group_title": "Frameworks" }, { "id": "git", "title": "Git", "group": "tool", "group_title": "Tools" }, { "id": "github", "title": "GitHub", "group": "tool", "group_title": "Tools" }, { "id": "nodejs", "title": "Node.js", "group": "framework", "group_title": "Frameworks" }, { "id": "redux", "title": "Redux", "group": "framework", "group_title": "Frameworks" }, { "id": "mui", "title": "Material-UI", "group": "framework", "group_title": "Frameworks" }, { "id": "bash", "title": "Bash", "group": "dev", "group_title": "Development Environment" }, { "id": "linux", "title": "Linux", "group": "dev", "group_title": "Development Environment" }, { "id": "variable", "title": "Environment Variables", "group": "dev", "group_title": "Development Environment" }, { "id": "ide", "title": "IDE", "group": "dev", "group_title": "Development Environment" }, { "id": "sql", "title": "SQL", "group": "data", "group_title": "Data Management" }, { "id": "postgresql", "title": "PostgreSQL", "group": "data", "group_title": "Data Management" }, { "id": "database", "title": "Databases", "group": "data", "group_title": "Data Management" }, { "id": "json", "title": "JSON", "group": "data", "group_title": "Data Management" }, { "id": "csv", "title": "CSV", "group": "data", "group_title": "Data Management" }, { "id": "rest", "title": "REST", "group": "api", "group_title": "APIs & Integration" }, { "id": "api", "title": "APIs", "group": "api", "group_title": "APIs & Integration" }, { "id": "graphql", "title": "GraphQL", "group": "api", "group_title": "APIs & Integration" }, { "id": "security", "title": "Web Security", "group": "security", "group_title": "Security" }, { "id": "auth", "title": "Authentication", "group": "security", "group_title": "Security" }, { "id": "csrf", "title": "CSRF", "group": "security", "group_title": "Security" }, { "id": "docker", "title": "Docker", "group": "devops", "group_title": "DevOps" }, { "id": "ci_cd", "title": "CI/CD", "group": "devops", "group_title": "DevOps" }, { "id": "nginx", "title": "NGINX", "group": "server", "group_title": "Web Servers" }, { "id": "testing", "title": "Testing", "group": "qa", "group_title": "Quality Assurance" }, { "id": "qa", "title": "QA", "group": "qa", "group_title": "Quality Assurance" }, { "id": "agile", "title": "Agile/Scrum", "group": "pm", "group_title": "Project Management" }, { "id": "product", "title": "Product Management", "group": "pm", "group_title": "Project Management" }, { "id": "figma", "title": "Figma", "group": "tool", "group_title": "Tools" }, { "id": "vscode", "title": "VSCode", "group": "tool", "group_title": "Tools" }, { "id": "ui_ux", "title": "UI/UX", "group": "design", "group_title": "Design" }, { "id": "webpack", "title": "Webpack", "group": "tool", "group_title": "Tools" }, { "id": "npm", "title": "NPM", "group": "tool", "group_title": "Tools" }, { "id": "yarn", "title": "Yarn", "group": "tool", "group_title": "Tools" }],
+      "resources": [{ "id": "d2b1a8f0", "title": "Computer Basics", "description": "Comprehensive introduction to computer fundamentals including hardware components operating systems file management and basic troubleshooting skills essential for anyone starting their technology journey", "category": "computer", "platform": "gcfglobal", "duration": 8, "difficulty": 0, "url": "https://edu.gcfglobal.org/en/computerbasics/", "format": "course" }, { "id": "f4c3b7a1", "title": "Internet Basics", "description": "Fundamental concepts of how the internet works including browsers search engines URLs web addresses online navigation and understanding web page structure", "category": "internet", "platform": "gcfglobal", "duration": 5, "difficulty": 0, "url": "https://edu.gcfglobal.org/en/internetbasics/", "format": "course" }, { "id": "a1e2d5c3", "title": "Learn HTML", "description": "A comprehensive guide to HTML structuring web pages with elements tags attributes and creating the foundation for web content", "category": "html", "platform": "codecademy", "duration": 10, "difficulty": 1, "url": "https://www.codecademy.com/learn/learn-html", "format": "course" }, { "id": "b3f4e6d5", "title": "Learn CSS", "description": "Learn the fundamentals of CSS for styling web pages including selectors properties layouts and responsive design techniques for creating visually appealing websites", "category": "css", "platform": "codecademy", "duration": 15, "difficulty": 1, "url": "https://www.codecademy.com/learn/learn-css", "format": "course" }, { "id": "c5a6b7e8", "title": "JavaScript Basics", "description": "An introduction to JavaScript programming covering variables data types functions control flow and basic DOM manipulation for interactive web development", "category": "javascript", "platform": "freecodecamp", "duration": 20, "difficulty": 2, "url": "https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/", "format": "course" }, { "id": "e8d9f0a2", "title": "Git Started with GitHub", "description": "Learn the basics of Git version control including repositories commits branching merging and collaborating with others using GitHub for code management", "category": "git", "platform": "youtube", "duration": 4, "difficulty": 1, "url": "https://www.youtube.com/watch?v=RGOj5yH7evg", "format": "video" }, { "id": "f0a1b2c4", "title": "Advanced CSS and Sass", "description": "Flexbox Grid Animations and more! Dive deeper into CSS to create complex layouts and engaging animations while learning Sass for more efficient and maintainable stylesheets", "category": "css", "platform": "youtube", "duration": 10, "difficulty": 2, "url": "https://www.youtube.com/watch?v=gXLjWRteuWI", "format": "video" }, { "id": "a2b3c4d6", "title": "React Tutorial for Beginners", "description": "Learn React from the ground up covering components state props hooks and building a complete web application with one of the most popular JavaScript libraries", "category": "react", "platform": "youtube", "duration": 25, "difficulty": 3, "url": "https://www.youtube.com/watch?v=SqcY0GlETPk", "format": "video" }, { "id": "b4c5d6e8", "title": "Python for Everybody", "description": "A great introduction to Python programming covering basic syntax data structures file handling and web scraping in a beginner-friendly course", "category": "python", "platform": "freecodecamp", "duration": 40, "difficulty": 1, "url": "https://www.freecodecamp.org/learn/scientific-computing-with-python/", "format": "course" }, { "id": "d6e7f8a0", "title": "Django for Beginners", "description": "Build websites with Python and Django covering models views templates URL routing and database integration to create robust web applications", "category": "django", "platform": "youtube", "duration": 30, "difficulty": 3, "url": "https://www.youtube.com/watch?v=F5mRW0jo-U4", "format": "video" }, { "id": "e8f9a0b2", "title": "Node.js and Express.js - Full Course", "description": "Learn server-side development with Node.js and Express building REST APIs handling requests and connecting to databases for a complete backend solution", "category": "nodejs", "platform": "youtube", "duration": 20, "difficulty": 3, "url": "https://www.youtube.com/watch?v=Oe421JkE9aI", "format": "video" }, { "id": "f0a1b3c5", "title": "Redux in 100 Seconds", "description": "A quick and concise overview of Redux for state management in JavaScript applications explaining core concepts like actions reducers and the store", "category": "redux", "platform": "youtube", "duration": 2, "difficulty": 2, "url": "https://www.youtube.com/watch?v=9Aso-Wb1K_c", "format": "video" }],
+      "paths": [{ "id": "computer_internet_foundations", "title": "Computers and the Internet Foundations", "description": "Complete beginners who need basic computer literacy.", "totalDuration": 13, "steps": [{ "rank": 0, "title": "Computer & Internet Basics", "categories": ["computer", "internet"] }] }, { "id": "frontend_developer", "title": "Frontend Developer", "description": "Client-side web application development.", "totalDuration": 86, "steps": [{ "rank": 0, "title": "Version Control", "categories": ["git", "github"] }, { "rank": 1, "title": "Markup and Styling", "categories": ["html", "css"] }, { "rank": 2, "title": "Client Programming", "categories": ["javascript"] }, { "rank": 3, "title": "Frontend Framework", "categories": ["react"] }, { "rank": 4, "title": "State Management", "categories": ["redux"] }] }, { "id": "backend_developer", "title": "Backend Developer", "description": "Server-side development with Python/Django.", "totalDuration": 94, "steps": [{ "rank": 0, "title": "Version Control", "categories": ["git", "github"] }, { "rank": 1, "title": "Server Programming", "categories": ["python"] }, { "rank": 2, "title": "Web Framework", "categories": ["django"] }, { "rank": 3, "title": "Server Runtime", "categories": ["nodejs"] }] }]
+    };
+
+    const DIFFICULTY_MAP = {
+      beginner: [0, 1], intermediate: [1, 2], advanced: [3, 4]
+    };
+
+    // --- HELPER FUNCTIONS ---
+    const getPlatformTitle = (platformId) => APP_DATA.platforms.find(p => p.id === platformId)?.title || "Unknown";
+    const getCategoryTitle = (categoryId) => APP_DATA.categories.find(c => c.id === categoryId)?.title || "Unknown";
+    const getResourceFormatIcon = (format) => {
+      switch (format) {
+        case 'video': return 'fab fa-youtube';
+        case 'course': return 'fas fa-graduation-cap';
+        case 'playlist': return 'fas fa-list';
+        default: return 'fas fa-file-alt';
+      }
+    };
+
+    // --- UI COMPONENTS ---
+    const Header = ({ onNavigate }) => {
+      const { theme, toggleTheme } = React.useContext(AppStateContext);
+      const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+
+      const navLink = (page, text) => (
+        <a href="#" onClick={() => { onNavigate({ page }); setIsMobileMenuOpen(false); }} className="block md:inline-block text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 rounded-md font-medium">{text}</a>
+      );
+
+      return (
+        <header className="bg-card-background/80 dark:bg-card-background/80 backdrop-blur-sm sticky top-0 z-50 shadow-md">
+          <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              <a href="#" onClick={() => onNavigate({ page: 'home' })} className="flex-shrink-0 text-xl md:text-2xl font-bold text-blue-600 dark:text-blue-400 flex items-center">
+                <i className="fas fa-rocket mr-2"></i><span>OpenIMIS Bootcamp</span>
+              </a>
+              <div className="hidden md:flex items-center space-x-4">
+                {navLink('paths', 'Learning Paths')}
+                {navLink('resources', 'Browse Resources')}
+                {navLink('progress', 'My Progress')}
+              </div>
+              <div className="flex items-center">
+                <button onClick={toggleTheme} className="ml-4 p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700">
+                  <i className={theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon'}></i>
+                </button>
+                <div className="md:hidden ml-2">
+                  <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 rounded-md text-gray-500 dark:text-gray-400">
+                    <i className="fas fa-bars text-xl"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            {isMobileMenuOpen && (
+              <div className="md:hidden pb-4">
+                {navLink('paths', 'Learning Paths')}
+                {navLink('resources', 'Browse Resources')}
+                {navLink('progress', 'My Progress')}
+              </div>
+            )}
+          </nav>
+        </header>
+      );
+    };
+
+    const HomePage = ({ onNavigate }) => {
+      const { paths } = React.useContext(DataContext);
+
+      return (
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="text-center mb-16">
+            <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg py-20 px-4">
+              <h1 className="text-4xl md:text-6xl font-extrabold text-white">Master OpenIMIS Development</h1>
+              <p className="mt-4 text-lg md:text-xl text-blue-100 max-w-2xl mx-auto">A curated collection of free resources to take you from beginner to professional contributor.</p>
+              <div className="mt-8 flex justify-center gap-4">
+                <button onClick={() => onNavigate({ page: 'paths' })} className="bg-white text-blue-600 font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300">Start a Learning Path</button>
+                <button onClick={() => onNavigate({ page: 'resources' })} className="bg-blue-900/50 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300">Browse All Resources</button>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center mb-16">
+            <div onClick={() => onNavigate({ page: 'resources' })} className="bg-card-background p-6 rounded-lg shadow-lg cursor-pointer transform hover:-translate-y-1 transition-transform">
+              <i className="fas fa-book text-4xl text-blue-500 mb-4"></i>
+              <h3 className="text-2xl font-bold">200+ Resources</h3>
+              <p className="text-gray-600 dark:text-gray-400">Curated from top platforms.</p>
+            </div>
+            <div onClick={() => onNavigate({ page: 'paths' })} className="bg-card-background p-6 rounded-lg shadow-lg cursor-pointer transform hover:-translate-y-1 transition-transform">
+              <i className="fas fa-road text-4xl text-blue-500 mb-4"></i>
+              <h3 className="text-2xl font-bold">12 Career Paths</h3>
+              <p className="text-gray-600 dark:text-gray-400">From frontend to DevOps.</p>
+            </div>
+            <div className="bg-card-background p-6 rounded-lg shadow-lg">
+              <i className="fas fa-layer-group text-4xl text-blue-500 mb-4"></i>
+              <h3 className="text-2xl font-bold">3 Skill Levels</h3>
+              <p className="text-gray-600 dark:text-gray-400">Beginner to Advanced.</p>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-3xl font-bold text-center mb-8">Popular Learning Paths</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {paths.slice(0, 3).map(path => (
+                <PathCard key={path.id} path={path} onNavigate={onNavigate} />
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    const PathCard = ({ path, onNavigate }) => (
+      <div className="bg-card-background rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 flex flex-col">
+        <div className="p-6 flex-grow">
+          <h3 className="text-xl font-bold mb-2">{path.title}</h3>
+          <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 h-16">{path.description}</p>
+        </div>
+        <div className="p-6 bg-gray-50 dark:bg-gray-800/50">
+          <div className="flex justify-between items-center text-sm text-gray-500 dark:text-gray-300 mb-4">
+            <span><i className="fas fa-clock mr-1"></i> {path.totalDuration} hours</span>
+            <span><i className="fas fa-list-ol mr-1"></i> {path.steps.length} steps</span>
+          </div>
+          <button onClick={() => onNavigate({ page: 'path', id: path.id })} className="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-full hover:bg-blue-700 transition-colors">View Path</button>
+        </div>
+      </div>
+    );
+
+    const DifficultyToggle = ({ difficulty, setDifficulty }) => (
+      <div className="flex justify-center mb-8">
+        <div className="bg-gray-200 dark:bg-gray-700 rounded-full p-1 flex space-x-1">
+          {Object.keys(DIFFICULTY_MAP).map(level => (
+            <button
+              key={level}
+              onClick={() => setDifficulty(level)}
+              className={`px-4 sm:px-6 py-2 rounded-full text-sm font-bold capitalize transition-colors ${difficulty === level ? 'bg-blue-600 text-white' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'}`}
+            >
+              {level}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+
+    const PathsBrowserPage = ({ onNavigate }) => {
+      const { paths } = React.useContext(DataContext);
+      const { difficulty, setDifficulty } = React.useContext(AppStateContext);
+
+      const filteredPaths = paths.filter(path => {
+        const difficulties = DIFFICULTY_MAP[difficulty];
+        return path.steps.some(step =>
+          APP_DATA.resources.some(res =>
+            step.categories.includes(res.category) && difficulties.includes(res.difficulty)
+          )
+        );
+      });
+
+      return (
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <h1 className="text-4xl font-bold text-center mb-4">Learning Paths</h1>
+          <p className="text-center text-gray-600 dark:text-gray-400 mb-8">Select your current skill level to find the right path for you.</p>
+          <DifficultyToggle difficulty={difficulty} setDifficulty={setDifficulty} />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredPaths.map(path => (
+              <PathCard key={path.id} path={path} onNavigate={onNavigate} />
+            ))}
+          </div>
+        </div>
+      );
+    };
+
+    const ResourceCard = ({ resource }) => (
+      <div className="bg-card-background rounded-lg shadow-lg overflow-hidden flex flex-col">
+        <div className="p-6 flex-grow">
+          <div className="flex justify-between items-start mb-2">
+            <h3 className="text-lg font-bold flex-1 pr-2">{resource.title}</h3>
+            <span className="text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-2 py-1 rounded-full whitespace-nowrap">{getPlatformTitle(resource.platform)}</span>
+          </div>
+          <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 h-20 overflow-hidden">{resource.description}</p>
+        </div>
+        <div className="p-6 bg-gray-50 dark:bg-gray-800/50">
+          <div className="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400 mb-4">
+            <span><i className="fas fa-clock mr-1"></i> {resource.duration} hours</span>
+            <DifficultyIndicator level={resource.difficulty} />
+          </div>
+          <a href={resource.url} target="_blank" rel="noopener noreferrer" className="w-full text-center bg-blue-600 text-white font-bold py-2 px-4 rounded-full hover:bg-blue-700 transition-colors block"> View Resource </a>
+        </div>
+      </div>
+    );
+
+    const ResourceBrowserPage = ({ onNavigate }) => {
+      const { resources, categories } = React.useContext(DataContext);
+      const { difficulty, setDifficulty } = React.useContext(AppStateContext);
+      const [selectedCategories, setSelectedCategories] = React.useState([]);
+
+      const handleCategoryToggle = (categoryId) => setSelectedCategories(p => p.includes(categoryId) ? p.filter(c => c !== categoryId) : [...p, categoryId]);
+
+      const filteredResources = React.useMemo(() => {
+        const difficultyLevels = DIFFICULTY_MAP[difficulty];
+        return resources.filter(res => {
+          const difficultyMatch = difficultyLevels.includes(res.difficulty);
+          const categoryMatch = selectedCategories.length === 0 || selectedCategories.includes(res.category);
+          return difficultyMatch && categoryMatch;
+        });
+      }, [resources, difficulty, selectedCategories]);
+
+      const categoryGroups = categories.reduce((acc, cat) => {
+        if (!acc[cat.group_title]) acc[cat.group_title] = [];
+        acc[cat.group_title].push(cat);
+        return acc;
+      }, {});
+
+      return (
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <h1 className="text-4xl font-bold text-center mb-2">Browse All Resources</h1>
+          <p className="text-center text-gray-600 dark:text-gray-400 mb-8">Find the perfect resource to fill knowledge gaps or explore new technologies.</p>
+          <DifficultyToggle difficulty={difficulty} setDifficulty={setDifficulty} />
+          <div className="flex flex-col md:flex-row gap-8">
+            <aside className="w-full md:w-1/4 lg:w-1/5">
+              <div className="bg-card-background p-4 rounded-lg shadow-lg sticky top-24">
+                <h3 className="font-bold mb-4 border-b border-border-color pb-2">Filter by Category</h3>
+                {Object.keys(categoryGroups).map(groupTitle => (
+                  <div key={groupTitle} className="mb-4">
+                    <h4 className="font-semibold text-sm text-gray-500 dark:text-gray-400 mb-2">{groupTitle}</h4>
+                    {categoryGroups[groupTitle].map(cat => (
+                      <label key={cat.id} className="flex items-center space-x-2 text-sm cursor-pointer hover:text-blue-500">
+                        <input type="checkbox" checked={selectedCategories.includes(cat.id)} onChange={() => handleCategoryToggle(cat.id)} className="rounded text-blue-600 focus:ring-blue-500" />
+                        <span>{cat.title}</span>
+                      </label>
+                    ))}
+                  </div>
+                ))}
+                {selectedCategories.length > 0 &&
+                  <button onClick={() => setSelectedCategories([])} className="w-full text-sm text-blue-600 dark:text-blue-400 hover:underline mt-2">Clear All Filters</button>
+                }
+              </div>
+            </aside>
+            <main className="w-full md:w-3/4 lg:w-4/5">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Showing {filteredResources.length} resources.</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {filteredResources.length > 0 ? filteredResources.map(res => (
+                  <ResourceCard key={res.id} resource={res} />
+                )) : <p>No resources match your criteria.</p>}
+              </div>
+            </main>
+          </div>
+        </div>
+      );
+    };
+
+    const PathDetailPage = ({ pathId, onNavigate }) => {
+      const { paths, resources } = React.useContext(DataContext);
+      const { progress, toggleComplete } = React.useContext(ProgressContext);
+      const { difficulty } = React.useContext(AppStateContext);
+      const [selectedStepRank, setSelectedStepRank] = React.useState(0);
+      const [modalResource, setModalResource] = React.useState(null);
+
+      const path = paths.find(p => p.id === pathId);
+
+      const difficultyLevels = DIFFICULTY_MAP[difficulty];
+      const visibleSteps = React.useMemo(() => path.steps.map(step => {
+        const stepResources = resources.filter(res =>
+          step.categories.includes(res.category) && difficultyLevels.includes(res.difficulty)
+        );
+        return { ...step, resources: stepResources };
+      }).filter(step => step.resources.length > 0), [path, resources, difficulty]);
+
+      React.useEffect(() => {
+        if (visibleSteps.length > 0) {
+          const currentStepExists = visibleSteps.some(step => step.rank === selectedStepRank);
+          if (!currentStepExists) {
+            setSelectedStepRank(visibleSteps[0].rank);
+          }
+        }
+      }, [visibleSteps, selectedStepRank]);
+
+      const selectedStep = visibleSteps.find(step => step.rank === selectedStepRank);
+
+      const resourcesByCat = selectedStep ? selectedStep.resources.reduce((acc, res) => {
+        if (!acc[res.category]) acc[res.category] = [];
+        acc[res.category].push(res);
+        return acc;
+      }, {}) : {};
+
+      if (!path) return <div className="text-center py-10">Path not found.</div>;
+
+      return (
+        <>
+          {modalResource && <ResourceDetailModal resource={modalResource} onClose={() => setModalResource(null)} />}
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <button onClick={() => onNavigate({ page: 'paths' })} className="mb-4 text-blue-600 dark:text-blue-400 hover:underline">
+              &larr; Back to All Paths
+            </button>
+            <h1 className="text-4xl font-bold mb-2">{path.title}</h1>
+            <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">{path.description}</p>
+
+            <div className="flex flex-col md:flex-row gap-8">
+              <div className="w-full md:w-1/3">
+                <h2 className="text-2xl font-bold mb-4">Path Steps</h2>
+                <div className="relative">
+                  {visibleSteps.map((step, index) => {
+                    const isCompleted = step.resources.every(res => progress.completed.includes(res.id));
+                    const isActive = selectedStep && step.rank === selectedStep.rank;
+
+                    return (
+                      <div key={step.rank} className="timeline-item relative pl-8 pb-10">
+                        <div className={`step-circle absolute left-0 top-0 w-6 h-6 rounded-full flex items-center justify-center font-bold
+                                                ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}`}>
+                          {isCompleted ? <i className="fas fa-check text-sm"></i> : index + 1}
+                        </div>
+                        <div onClick={() => setSelectedStepRank(step.rank)} className={`cursor-pointer ${isActive ? 'font-bold text-blue-600 dark:text-blue-400' : ''}`}>
+                          {step.title}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="w-full md:w-2/3 bg-card-background rounded-lg shadow-lg p-6">
+                {selectedStep ? (
+                  <>
+                    <h2 className="text-2xl font-bold mb-2">{selectedStep.title}</h2>
+                    <p className="text-gray-600 dark:text-gray-400 mb-6">Resources organized by category.</p>
+
+                    {Object.keys(resourcesByCat).length > 0 ? Object.keys(resourcesByCat).map(catId => (
+                      <div key={catId} className="mb-6">
+                        <h3 className="text-lg font-bold border-b border-border-color pb-2 mb-3">{getCategoryTitle(catId)}</h3>
+                        <div className="space-y-2">
+                          {resourcesByCat[catId].map(res => (
+                            <div key={res.id} className="flex items-center justify-between p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700/50">
+                              <div onClick={() => setModalResource(res)} className="flex items-center cursor-pointer flex-grow min-w-0">
+                                <i className={`fa-fw ${getResourceFormatIcon(res.format)} text-blue-500 dark:text-blue-400 text-lg w-8 text-center`}></i>
+                                <span className="font-medium ml-3 truncate">{res.title}</span>
+                              </div>
+                              <button onClick={() => toggleComplete(res.id)} className={`ml-4 flex-shrink-0 w-10 h-10 rounded-full transition-colors ${progress.completed.includes(res.id) ? 'bg-green-500 text-white' : 'bg-gray-200 dark:bg-gray-600'}`}>
+                                <i className="fas fa-check"></i>
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )) : <p>No resources match the current filter.</p>}
+                  </>
+                ) : (
+                  <p>Select a step to see its resources.</p>
+                )}
+              </div>
+            </div>
+          </div>
+        </>
+      );
+    };
+
+    const ProgressDashboardPage = ({ onNavigate }) => {
+      const { resources, paths } = React.useContext(DataContext);
+      const { progress } = React.useContext(ProgressContext);
+
+      const completedResources = progress.completed.map(id => resources.find(r => r.id === id)).filter(Boolean);
+      const hoursLearned = completedResources.reduce((sum, res) => sum + res.duration, 0);
+
+      const startedPaths = paths.filter(path =>
+        path.steps.some(step =>
+          resources.some(res => step.categories.includes(res.category) && progress.completed.includes(res.id))
+        )
+      );
+
+      return (
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <h1 className="text-4xl font-bold text-center mb-8">My Progress</h1>
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div className="bg-card-background p-6 rounded-lg shadow-lg text-center">
+              <i className="fas fa-check-circle text-4xl text-green-500 mb-3"></i>
+              <p className="text-5xl font-bold">{progress.completed.length}</p>
+              <p className="text-gray-500 dark:text-gray-400">Resources Completed</p>
+            </div>
+            <div className="bg-card-background p-6 rounded-lg shadow-lg text-center">
+              <i className="fas fa-hourglass-half text-4xl text-yellow-500 mb-3"></i>
+              <p className="text-5xl font-bold">{hoursLearned}</p>
+              <p className="text-gray-500 dark:text-gray-400">Hours Learned</p>
+            </div>
+            <div className="bg-card-background p-6 rounded-lg shadow-lg text-center">
+              <i className="fas fa-road text-4xl text-blue-500 mb-3"></i>
+              <p className="text-5xl font-bold">{startedPaths.length}</p>
+              <p className="text-gray-500 dark:text-gray-400">Paths Started</p>
+            </div>
+          </div>
+          {/* Active Paths */}
+          <div>
+            <h2 className="text-3xl font-bold mb-6">Active Learning Paths</h2>
+            {startedPaths.length > 0 ? (
+              <div className="space-y-6">
+                {startedPaths.map(path => {
+                  const pathResources = path.steps.flatMap(step => resources.filter(res => step.categories.includes(res.category)));
+                  const completedInPath = pathResources.filter(res => progress.completed.includes(res.id)).length;
+                  const progressPercent = pathResources.length > 0 ? Math.round((completedInPath / pathResources.length) * 100) : 0;
+                  return (
+                    <div key={path.id} className="bg-card-background p-6 rounded-lg shadow-lg">
+                      <h3 className="text-xl font-bold">{path.title}</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{completedInPath} / {pathResources.length} resources completed</p>
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 mb-4">
+                        <div className="bg-blue-600 h-4 rounded-full" style={{ width: `${progressPercent}%` }}></div>
+                      </div>
+                      <button onClick={() => onNavigate({ page: 'path', id: path.id })} className="bg-blue-600 text-white font-bold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors">Continue Path</button>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-10 bg-card-background rounded-lg shadow-lg">
+                <p className="text-gray-500 dark:text-gray-400">You haven't started any learning paths yet.</p>
+                <button onClick={() => onNavigate({ page: 'paths' })} className="mt-4 bg-blue-600 text-white font-bold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors">Explore Paths</button>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    };
+
+    const DifficultyIndicator = ({ level }) => {
+      const bars = [];
+      let activeBars = 1;
+      if (level === 2) {
+        activeBars = 2;
+      } else if (level >= 3) {
+        activeBars = 3;
+      }
+
+      for (let i = 0; i < 3; i++) {
+        bars.push(
+          <div key={i} className={`h-2 w-5 rounded-full ${i < activeBars ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'}`}></div>
+        );
+      }
+
+      return <div className="flex items-center space-x-1">{bars}</div>;
+    };
+
+    const ResourceDetailModal = ({ resource, onClose }) => {
+      return (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={onClose}>
+          <div className="bg-card-background rounded-lg shadow-xl max-w-2xl w-full" onClick={e => e.stopPropagation()}>
+            <div className="p-6 border-b border-border-color flex justify-between items-center">
+              <h2 className="text-2xl font-bold">{resource.title}</h2>
+              <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">&times;</button>
+            </div>
+            <div className="p-6 max-h-[60vh] overflow-y-auto">
+              <p className="text-gray-600 dark:text-gray-400 mb-6">{resource.description}</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg"><strong>Platform:</strong> {getPlatformTitle(resource.platform)}</div>
+                <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg"><strong>Category:</strong> {getCategoryTitle(resource.category)}</div>
+                <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg"><strong>Est. Duration:</strong> {resource.duration} hours</div>
+                <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg flex items-center justify-between">
+                  <strong>Difficulty:</strong>
+                  <DifficultyIndicator level={resource.difficulty} />
+                </div>
+              </div>
+            </div>
+            <div className="p-6 flex justify-end gap-4 bg-gray-50 dark:bg-gray-800/50 rounded-b-lg">
+              <button onClick={onClose} className="bg-gray-200 dark:bg-gray-600 font-bold py-2 px-6 rounded-full hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors">Close</button>
+              <a href={resource.url} target="_blank" rel="noopener noreferrer" className="bg-blue-600 text-white font-bold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors">Go to Resource</a>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+
+    // --- MAIN APP COMPONENT ---
+    const App = () => {
+      const [currentPage, setCurrentPage] = React.useState({ page: 'home' });
+      const [theme, setTheme] = React.useState('light');
+
+      // --- Progress State ---
+      const [progress, setProgress] = React.useState({ completed: [] });
+      React.useEffect(() => {
+        const saved = localStorage.getItem('openimis_progress');
+        if (saved) setProgress(JSON.parse(saved));
+      }, []);
+      const saveProgress = (newProgress) => {
+        setProgress(newProgress);
+        localStorage.setItem('openimis_progress', JSON.stringify(newProgress));
+      };
+      const toggleComplete = (resourceId) => {
+        const completed = [...progress.completed];
+        const index = completed.indexOf(resourceId);
+        if (index > -1) completed.splice(index, 1);
+        else completed.push(resourceId);
+        saveProgress({ ...progress, completed });
+      };
+
+      // --- Difficulty & Theme State ---
+      const [difficulty, setDifficulty] = React.useState('beginner');
+
+      React.useEffect(() => {
+        const savedDifficulty = localStorage.getItem('openimis_difficulty');
+        if (savedDifficulty) setDifficulty(savedDifficulty);
+
+        const savedTheme = localStorage.getItem('openimis_theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+        setTheme(initialTheme);
+        document.documentElement.classList.toggle('dark', initialTheme === 'dark');
+      }, []);
+
+      const handleSetDifficulty = (level) => {
+        setDifficulty(level);
+        localStorage.setItem('openimis_difficulty', level);
+      };
+
+      const toggleTheme = () => {
+        const newTheme = theme === 'light' ? 'dark' : 'light';
+        setTheme(newTheme);
+        localStorage.setItem('openimis_theme', newTheme);
+        document.documentElement.classList.toggle('dark', newTheme === 'dark');
+      };
+
+      const handleNavigate = (destination) => {
+        setCurrentPage(destination);
+        window.scrollTo(0, 0);
+      };
+
+      const renderPage = () => {
+        switch (currentPage.page) {
+          case 'paths': return <PathsBrowserPage onNavigate={handleNavigate} />;
+          case 'path': return <PathDetailPage pathId={currentPage.id} onNavigate={handleNavigate} />;
+          case 'resources': return <ResourceBrowserPage onNavigate={handleNavigate} />;
+          case 'progress': return <ProgressDashboardPage onNavigate={handleNavigate} />;
+          case 'home': default: return <HomePage onNavigate={handleNavigate} />;
+        }
+      };
+
+      return (
+        <DataContext.Provider value={APP_DATA}>
+          <ProgressContext.Provider value={{ progress, toggleComplete, saveProgress }}>
+            <AppStateContext.Provider value={{ theme, toggleTheme, difficulty, setDifficulty: handleSetDifficulty }}>
+              <div className="min-h-screen flex flex-col">
+                <Header onNavigate={handleNavigate} />
+                <main className="flex-grow">
+                  {renderPage()}
+                </main>
+              </div>
+            </AppStateContext.Provider>
+          </ProgressContext.Provider>
+        </DataContext.Provider>
+      );
+    };
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+
+</html>
