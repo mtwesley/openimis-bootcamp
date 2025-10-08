@@ -14,7 +14,9 @@ export interface Resource {
   id: string;
   title: string;
   description: string;
+  organization: string;
   category: string[];
+  prerequisites: string[];
   platform: string;
   duration: number;
   difficulty: number;

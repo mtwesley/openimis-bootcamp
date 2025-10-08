@@ -7,6 +7,7 @@ import DifficultyToggle from '../components/shared/DifficultyToggle';
 import ResourceDetailModal from '../components/shared/ResourceDetailModal';
 import type { Resource } from '../types';
 import { getDifficultyLevels } from '../utils/difficulty';
+import { getIconColor } from '../utils/iconColors';
 
 const PathDetailPage: React.FC = () => {
   const { path_id } = useParams<{ path_id: string }>();
@@ -54,6 +55,7 @@ const PathDetailPage: React.FC = () => {
   const getFormatIcon = (format: string) => {
     switch (format) {
       case 'video': return 'fab fa-youtube';
+      case 'youtube': return 'fab fa-youtube';
       case 'course': return 'fas fa-graduation-cap';
       case 'playlist': return 'fas fa-list';
       default: return 'fas fa-file-alt';
@@ -62,27 +64,87 @@ const PathDetailPage: React.FC = () => {
 
   return (
     <>
-      {modalResource && <ResourceDetailModal resource={modalResource} onClose={() => setModalResource(null)} platforms={platforms} categories={categories} />}
+      {modalResource && <ResourceDetailModal 
+        resource={modalResource} 
+        onClose={() => setModalResource(null)} 
+        platforms={platforms} 
+        categories={categories}
+        onToggleCompletion={toggleResourceCompletion}
+        isCompleted={completedResources.includes(modalResource.id)}
+      />}
       <div className="container mx-auto px-4 py-8">
         <div className="relative mb-8">
           <Link to="/paths" className="text-primary hover:text-secondary transition-colors font-semibold">
-            <i className="fas fa-chevron-left mr-2"></i> Back to All Paths
+            <i className={`fas fa-chevron-left mr-2 ${getIconColor('fas fa-chevron-left')}`}></i> Back to All Paths
           </Link>
         </div>
 
         <header className="text-center mb-12">
-          <h1 className="text-5xl font-extrabold text-gray-900 dark:text-white mb-3">{path.title}</h1>
-          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">{path.description}</p>
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-primary/10 rounded-full mb-6">
+            <i className={`fas fa-road ${getIconColor('fas fa-road')} text-3xl`}></i>
+          </div>
+          <h1 className="text-5xl font-extrabold text-gray-900 mb-3">{path.title}</h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-6">{path.description}</p>
+          <div className="flex justify-center items-center space-x-6 text-sm text-gray-600">
+            <span className="flex items-center">
+              <i className={`fas fa-clock ${getIconColor('fas fa-clock')} mr-2`}></i>
+              {path.totalDuration} hours total
+            </span>
+            <span className="flex items-center">
+              <i className={`fas fa-list-ol ${getIconColor('fas fa-list-ol')} mr-2`}></i>
+              {path.steps.length} steps
+            </span>
+            <span className="flex items-center">
+              <i className={`fas fa-layer-group ${getIconColor('fas fa-layer-group')} mr-2`}></i>
+              Structured learning path
+            </span>
+          </div>
         </header>
 
         <div className="flex justify-center mb-12">
-          <div className="flex items-center space-x-4 p-4 bg-card-background rounded-xl shadow-md">
+          <div className="bg-card-background rounded-xl shadow-lg p-6 border border-gray-200">
             <DifficultyToggle />
           </div>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-12">
-          <aside className="lg:w-1/3 lg:sticky top-24 self-start">
+          <aside className="lg:w-1/3 lg:sticky top-24 self-start space-y-6">
+            {/* Prerequisites Section - Based on Current Step */}
+            {(() => {
+              if (!currentStep) return null;
+              
+              const stepPrereqCats = new Set<string>();
+              currentStep.categories.forEach(catId => {
+                resources
+                  .filter(res => (Array.isArray(res.category) ? res.category.includes(catId) : res.category === catId))
+                  .forEach(res => {
+                    res.prerequisites.forEach(prereq => stepPrereqCats.add(prereq));
+                  });
+              });
+              const prereqCategories = Array.from(stepPrereqCats)
+                .map(id => categories.find(c => c.id === id))
+                .filter(Boolean);
+
+              return prereqCategories.length > 0 ? (
+                <div className="bg-card-background p-6 rounded-xl shadow-lg">
+                  <h2 className="text-2xl font-bold mb-4">Prerequisites</h2>
+                  <p className="text-sm text-gray-600 mb-4">Recommended knowledge for this step:</p>
+                  <div className="space-y-2">
+                    {prereqCategories.map(cat => (
+                      <Link
+                        key={cat!.id}
+                        to={`/category/${cat!.id}`}
+                        className="block p-3 bg-gray-50 rounded-lg hover:bg-primary/10 transition-colors"
+                      >
+                        <div className="font-semibold text-gray-900">{cat!.title}</div>
+                        <div className="text-xs text-gray-500">{cat!.group_title}</div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ) : null;
+            })()}
+
             <div className="bg-card-background p-6 rounded-xl shadow-lg">
               <h2 className="text-2xl font-bold mb-6">Path Steps</h2>
               <div className="relative">
@@ -120,21 +182,24 @@ const PathDetailPage: React.FC = () => {
                     <div key={categoryTitle} className="mb-8">
                       <h3 className="text-xl font-semibold border-b-2 border-gray-200 dark:border-gray-700 pb-2 mb-4">{categoryTitle}</h3>
                       <div className="space-y-3">
-                        {resourcesInCategory.map(res => (
-                          <div key={res.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors">
-                            <div onClick={() => setModalResource(res)} className="flex items-center cursor-pointer flex-grow min-w-0 mr-4">
-                              <i className={`fa-fw ${getFormatIcon(res.format)} text-primary text-xl w-8 text-center`}></i>
-                              <span className="font-medium ml-4 truncate">{res.title}</span>
+                        {resourcesInCategory.map(res => {
+                          const isCompleted = completedResources.includes(res.id);
+                          return (
+                            <div key={res.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50/30 dark:hover:bg-gray-800/10 transition-colors">
+                              <div onClick={() => setModalResource(res)} className="flex items-center cursor-pointer flex-grow min-w-0 mr-4">
+                                <i className={`fa-fw ${getFormatIcon(res.format)} ${getIconColor(getFormatIcon(res.format), 'format')} text-xl w-8 text-center`}></i>
+                                <span className="font-medium ml-4 truncate">{res.title}</span>
+                              </div>
+                              <button 
+                                onClick={() => toggleResourceCompletion(res.id)} 
+                                title={isCompleted ? 'Mark as Incomplete' : 'Mark as Complete'}
+                                className={`flex-shrink-0 w-10 h-10 rounded-full transition-all duration-200 transform focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-card-background
+                                            ${isCompleted ? 'bg-green-500 text-white scale-100 hover:bg-green-600' : 'bg-transparent border-2 border-gray-200 text-gray-200 dark:border-gray-700 dark:text-gray-700 scale-90 hover:scale-100 hover:border-green-500 hover:text-green-500'}`}>
+                                <i className={isCompleted ? 'fas fa-check' : 'far fa-circle'}></i>
+                              </button>
                             </div>
-                            <button 
-                              onClick={() => toggleResourceCompletion(res.id)} 
-                              title={completedResources.includes(res.id) ? 'Mark as Incomplete' : 'Mark as Complete'}
-                              className={`flex-shrink-0 w-10 h-10 rounded-full transition-all duration-200 transform focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-card-background
-                                          ${completedResources.includes(res.id) ? 'bg-green-500 text-white scale-100 hover:bg-green-600' : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 scale-90 hover:scale-100 hover:bg-green-200 dark:hover:bg-green-900/50'}`}>
-                              <i className="fas fa-check"></i>
-                            </button>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
                   )) : <p className="text-center py-10 text-gray-500">No resources match the current difficulty for this step.</p>}

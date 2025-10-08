@@ -36,10 +36,15 @@ const ResourceBrowserPage: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row justify-between items-center mb-8">
-        <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-4 md:mb-0">
-          Browse Resources
-        </h1>
-        <div className="flex items-center space-x-4">
+        <div>
+          <h1 className="text-4xl font-extrabold text-gray-900 mb-2">
+            Browse Resources
+          </h1>
+          <p className="text-lg text-gray-600">
+            Discover {resources.length}+ curated learning resources
+          </p>
+        </div>
+        <div className="flex items-center space-x-4 mt-4 md:mt-0">
           <DifficultyToggle />
         </div>
       </div>

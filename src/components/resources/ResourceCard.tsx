@@ -1,5 +1,7 @@
 import React from 'react';
 import type { Resource } from '../../types';
+import { getIconColor } from '../../utils/iconColors';
+import { useData } from '../../contexts/DataContext';
 
 interface ResourceCardProps {
   resource: Resource;
@@ -7,6 +9,8 @@ interface ResourceCardProps {
 }
 
 const ResourceCard: React.FC<ResourceCardProps> = ({ resource, onClick }) => {
+  const { platforms } = useData();
+
   const getFormatIcon = (format: string) => {
     switch (format) {
       case 'video': return 'fab fa-youtube';
@@ -23,34 +27,36 @@ const ResourceCard: React.FC<ResourceCardProps> = ({ resource, onClick }) => {
     return 'fas fa-globe';
   }
 
-  const getPlatformTitle = (platform: string) => {
-    // Simple mapping, can be expanded
-    const platformNames: { [key: string]: string } = {
-      youtube: 'YouTube',
-      microsoft: 'Microsoft',
-      gcfglobal: 'GCF Global',
-      // Add more as needed
-    };
-    return platformNames[platform.toLowerCase()] || platform.charAt(0).toUpperCase() + platform.slice(1);
+  const getPlatformTitle = (platformId: string) => {
+    const platform = platforms.find(p => p.id === platformId);
+    return platform ? platform.title : platformId.charAt(0).toUpperCase() + platformId.slice(1);
   };
 
   return (
-    <div className="bg-card-background rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 flex flex-col cursor-pointer" onClick={onClick}>
+    <div className="bg-card-background rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 flex flex-col cursor-pointer border border-gray-200 hover:border-primary/50" onClick={onClick}>
       <div className="p-6 flex-grow">
-        <div className="flex justify-between items-start mb-2">
-          <h3 className="text-xl font-bold flex-grow pr-4">{resource.title}</h3>
-          <span className="text-2xl text-gray-400 dark:text-gray-500">
-            <i className={getPlatformIcon(resource.platform)}></i>
-          </span>
+        <div className="flex justify-between items-start mb-4">
+          <div className="flex-1">
+            <h3 className="text-xl font-bold text-gray-900 mb-2 leading-tight">{resource.title}</h3>
+            <div className="flex items-center space-x-4 text-sm text-gray-600">
+              <span className="flex items-center">
+                <i className={`${getFormatIcon(resource.format)} mr-1 ${getIconColor(getFormatIcon(resource.format), 'format')}`}></i>
+                {getPlatformTitle(resource.platform)}
+              </span>
+              <span className="flex items-center">
+                <i className={`fas fa-clock mr-1 ${getIconColor('fas fa-clock')}`}></i>
+                {resource.duration}h
+              </span>
+            </div>
+          </div>
+          <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center ml-4">
+            <i className={`${getPlatformIcon(resource.platform)} ${getIconColor(getPlatformIcon(resource.platform), 'platform')} text-lg`}></i>
+          </div>
         </div>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{getPlatformTitle(resource.platform)}</p>
+        <p className="text-gray-700 text-sm leading-relaxed">{resource.description}</p>
       </div>
-      <div className="p-6 bg-gray-50 dark:bg-gray-800/50">
-        <div className="flex justify-between items-center text-sm text-gray-500 dark:text-gray-300 mb-4">
-          <span><i className="fas fa-clock mr-1"></i> {resource.duration} hours</span>
-          <span><i className={`${getFormatIcon(resource.format)} mr-1`}></i> {resource.format}</span>
-        </div>
-        <button onClick={onClick} className="w-full block text-center bg-primary text-white font-bold py-2 px-4 rounded-full hover:bg-secondary transition-colors">
+      <div className="p-6 bg-gradient-to-r from-primary/5 to-secondary/5 border-t border-gray-100">
+        <button onClick={onClick} className="w-full bg-primary text-white font-bold py-3 px-6 rounded-lg hover:bg-secondary transition-colors shadow-sm">
           View Resource
         </button>
       </div>

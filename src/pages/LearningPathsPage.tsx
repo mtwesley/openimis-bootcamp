@@ -32,10 +32,15 @@ const LearningPathsPage: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row justify-between items-center mb-8">
-        <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-4 md:mb-0">
-          Learning Paths
-        </h1>
-        <div className="flex items-center space-x-4">
+        <div>
+          <h1 className="text-4xl font-extrabold text-gray-900 mb-2">
+            Learning Paths
+          </h1>
+          <p className="text-lg text-gray-600">
+            Structured learning journeys from beginner to advanced
+          </p>
+        </div>
+        <div className="flex items-center space-x-4 mt-4 md:mt-0">
           <DifficultyToggle />
         </div>
       </div>

@@ -26,22 +26,25 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ categories, selectedCateg
   });
 
   return (
-    <div className="bg-card-background p-6 rounded-xl shadow-lg sticky top-24">
-      <h3 className="text-2xl font-bold mb-6">Filter & Sort</h3>
+    <div className="bg-card-background p-6 rounded-xl shadow-lg sticky top-24 border border-gray-200">
+      <div className="mb-6">
+        <h3 className="text-2xl font-bold text-gray-900 mb-2">Filter & Sort</h3>
+        <p className="text-sm text-gray-600">Refine your search</p>
+      </div>
       <div className="space-y-6">
         {Object.entries(groupedCategories).sort(([a], [b]) => (groupDisplayNames[a] || a).localeCompare(groupDisplayNames[b] || b)).map(([group, cats]) => (
-          <div key={group}>
-            <h4 className="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-300">{groupDisplayNames[group] || group}</h4>
-            <div className="space-y-2">
+          <div key={group} className="border-b border-gray-100 pb-4 last:border-b-0">
+            <h4 className="text-lg font-semibold mb-4 text-primary">{groupDisplayNames[group] || group}</h4>
+            <div className="space-y-3">
               {cats.map(category => (
-                <label key={category.id} className="flex items-center space-x-3 cursor-pointer">
+                <label key={category.id} className="flex items-center space-x-3 cursor-pointer group">
                   <input
                     type="checkbox"
                     checked={selectedCategories.includes(category.id)}
                     onChange={() => onCategoryChange(category.id)}
-                    className="form-checkbox h-5 w-5 text-primary rounded bg-gray-200 dark:bg-gray-700 border-transparent focus:ring-primary-dark"
+                    className="form-checkbox h-5 w-5 text-primary rounded bg-gray-100 border-gray-300 focus:ring-primary focus:ring-offset-0 transition-colors"
                   />
-                  <span className="text-gray-800 dark:text-gray-200">{category.title}</span>
+                  <span className="text-gray-700 group-hover:text-primary transition-colors">{category.title}</span>
                 </label>
               ))}
             </div>

@@ -8,12 +8,16 @@ const DifficultyToggle: React.FC = () => {
   const difficulties: Difficulty[] = ['All', 'Beginner', 'Intermediate', 'Advanced'];
 
   return (
-    <div className="flex space-x-2 p-1 bg-gray-200 dark:bg-gray-700 rounded-lg">
+    <div className="flex space-x-1 p-1 bg-gray-100 rounded-lg border border-gray-200">
       {difficulties.map(d => (
         <button
           key={d}
           onClick={() => setDifficulty(d)}
-          className={`px-4 py-2 text-sm font-medium rounded-md hover:cursor-pointer ${difficulty === d ? 'bg-white dark:bg-gray-900 text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-400'}`}>
+          className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 hover:cursor-pointer ${
+            difficulty === d 
+              ? 'bg-primary text-white shadow-sm transform scale-105' 
+              : 'text-gray-700 hover:text-primary hover:bg-primary/5'
+          }`}>
           {d}
         </button>
       ))}

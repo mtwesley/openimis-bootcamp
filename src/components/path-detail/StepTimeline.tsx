@@ -9,15 +9,37 @@ interface StepTimelineProps {
 
 const StepTimeline: React.FC<StepTimelineProps> = ({ steps, activeStep, onStepClick }) => {
   return (
-    <ol className="relative border-l border-gray-200 dark:border-gray-700">
+    <ol className="relative border-l-2 border-primary/20">
       {steps.map((step, index) => (
-        <li key={step.rank} className="mb-10 ml-4">
+        <li key={step.rank} className="mb-8 ml-6">
           <div
-            className={`absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -left-1.5 border border-white dark:border-gray-900 dark:bg-gray-700 ${activeStep === index ? 'bg-blue-500' : ''}`}>
+            className={`absolute w-4 h-4 rounded-full mt-1.5 -left-2 border-2 transition-all duration-200 ${
+              activeStep === index
+                ? 'bg-primary border-primary shadow-lg shadow-primary/30'
+                : 'bg-white border-gray-300'
+            }`}>
           </div>
-          <button onClick={() => onStepClick(index)} className="text-left">
-            <time className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">Step {index + 1}</time>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{step.title}</h3>
+          <button
+            onClick={() => onStepClick(index)}
+            className={`text-left p-4 rounded-lg transition-all duration-200 hover:bg-primary/5 border border-transparent hover:border-primary/20 ${
+              activeStep === index ? 'bg-primary/10 border-primary/30' : ''
+            }`}>
+            <div className="flex items-center mb-2">
+              <span className={`text-xs font-medium px-2 py-1 rounded-full ${
+                activeStep === index
+                  ? 'bg-primary text-white'
+                  : 'bg-gray-100 text-gray-600'
+              }`}>
+                Step {index + 1}
+              </span>
+            </div>
+            <h3 className={`text-lg font-semibold transition-colors ${
+              activeStep === index
+                ? 'text-primary'
+                : 'text-gray-900 hover:text-primary'
+            }`}>
+              {step.title}
+            </h3>
           </button>
         </li>
       ))}
