@@ -2,6 +2,7 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
 import { useDifficulty } from '../contexts/DifficultyContext';
+import { useProgress } from '../contexts/ProgressContext';
 import ResourceCard from '../components/resources/ResourceCard';
 import ResourceDetailModal from '../components/shared/ResourceDetailModal';
 import type { Resource } from '../types';
@@ -12,6 +13,7 @@ const CategoryDetailPage: React.FC = () => {
   const { category } = useParams<{ category: string }>();
   const { resources, categories, platforms } = useData();
   const { difficulty } = useDifficulty();
+  const { completedResources, toggleResourceCompletion } = useProgress();
   const [modalResource, setModalResource] = React.useState<Resource | null>(null);
 
   const categoryInfo = categories.find(c => c.id === category);
@@ -42,6 +44,8 @@ const CategoryDetailPage: React.FC = () => {
           onClose={() => setModalResource(null)}
           platforms={platforms}
           categories={categories}
+          onToggleCompletion={toggleResourceCompletion}
+          isCompleted={completedResources.includes(modalResource.id)}
         />
       )}
       <div className="container mx-auto px-4 py-8">

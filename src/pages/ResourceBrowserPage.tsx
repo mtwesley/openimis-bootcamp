@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useData } from '../contexts/DataContext';
 import { useDifficulty } from '../contexts/DifficultyContext';
+import { useProgress } from '../contexts/ProgressContext';
 import FilterSidebar from '../components/resources/FilterSidebar';
 import ResourceCard from '../components/resources/ResourceCard';
 import DifficultyToggle from '../components/shared/DifficultyToggle';
@@ -11,6 +12,7 @@ import type { Resource } from '../types';
 const ResourceBrowserPage: React.FC = () => {
   const { resources, categories, platforms } = useData();
   const { difficulty } = useDifficulty();
+  const { completedResources, toggleResourceCompletion } = useProgress();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [modalResource, setModalResource] = useState<Resource | null>(null);
 
@@ -70,6 +72,8 @@ const ResourceBrowserPage: React.FC = () => {
           onClose={() => setModalResource(null)}
           platforms={platforms}
           categories={categories}
+          onToggleCompletion={toggleResourceCompletion}
+          isCompleted={completedResources.includes(modalResource.id)}
         />
       )}
     </div>
