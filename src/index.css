@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+:root {
+    --primary-color: #3b82f6;
+    --secondary-color: #1e40af;
+    --background-color: #f3f4f6;
+    --text-color: #111827;
+    --card-background: #ffffff;
+    --border-color: #e5e7eb;
+}
+html.dark {
+    --primary-color: #60a5fa;
+    --secondary-color: #93c5fd;
+    --background-color: #111827;
+    --text-color: #f9fafb;
+    --card-background: #1f2937;
+    --border-color: #374151;
+}
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
+}
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: 11px;
+    top: 28px;
+    bottom: -28px;
+    width: 2px;
+    background-color: var(--border-color);
+}
+.timeline-item:last-child::before {
+    display: none;
+}
+.step-circle {
+    background-color: var(--background-color);
+    border: 2px solid var(--border-color);
+}
+.step-circle.active {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+ .step-circle.completed {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+/* Custom scrollbar for better dark mode experience */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--border-color); }
+::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #555; }
