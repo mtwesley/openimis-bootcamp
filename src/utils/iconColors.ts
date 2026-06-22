@@ -9,64 +9,64 @@ export const getIconColor = (iconClass: string, context?: string): string => {
   // Color mapping based on icon type
   const colorMap: Record<string, string> = {
     // Content types
-    'youtube': 'icon-red',
-    'graduation-cap': 'icon-purple',
-    'list': 'icon-orange',
-    'file-alt': 'icon-blue',
-    'globe': 'icon-teal',
-    'microsoft': 'icon-cyan',
+    'youtube': 'text-icon-red',
+    'graduation-cap': 'text-icon-purple',
+    'list': 'text-icon-orange',
+    'file-alt': 'text-icon-blue',
+    'globe': 'text-icon-teal',
+    'microsoft': 'text-icon-cyan',
 
     // Navigation and UI
-    'road': 'icon-green',
-    'chart-line': 'icon-indigo',
-    'check-circle': 'icon-green',
-    'hourglass-half': 'icon-yellow',
-    'arrow-right': 'icon-blue',
-    'chevron-left': 'icon-gray-600',
+    'road': 'text-icon-green',
+    'chart-line': 'text-icon-indigo',
+    'check-circle': 'text-icon-green',
+    'hourglass-half': 'text-icon-yellow',
+    'arrow-right': 'text-icon-blue',
+    'chevron-left': 'text-gray-600',
 
     // Time and progress
-    'clock': 'icon-orange',
-    'list-ol': 'icon-purple',
-    'layer-group': 'icon-teal',
-    'check': 'icon-green',
+    'clock': 'text-icon-orange',
+    'list-ol': 'text-icon-purple',
+    'layer-group': 'text-icon-teal',
+    'check': 'text-icon-green',
 
     // Actions
-    'file-export': 'icon-blue',
-    'file-import': 'icon-green',
-    'book': 'icon-purple',
-    'tags': 'icon-pink',
+    'file-export': 'text-icon-blue',
+    'file-import': 'text-icon-green',
+    'book': 'text-icon-purple',
+    'tags': 'text-icon-pink',
   };
 
   // Context-based overrides
   if (context === 'platform') {
     const platformColors: Record<string, string> = {
-      'youtube': 'icon-red',
-      'microsoft': 'icon-cyan',
-      'default': 'icon-teal',
+      'youtube': 'text-icon-red',
+      'microsoft': 'text-icon-cyan',
+      'default': 'text-icon-teal',
     };
     return platformColors[iconName] || platformColors.default;
   }
 
   if (context === 'format') {
     const formatColors: Record<string, string> = {
-      'youtube': 'icon-red',         // Videos - Red
-      'graduation-cap': 'icon-blue',  // Courses - Blue
-      'list': 'icon-orange',
-      'file-alt': 'icon-blue',
+      'youtube': 'text-icon-red',         // Videos - Red
+      'graduation-cap': 'text-icon-blue',  // Courses - Blue
+      'list': 'text-icon-orange',
+      'file-alt': 'text-icon-blue',
     };
-    return formatColors[iconName] || 'icon-blue';
+    return formatColors[iconName] || 'text-icon-blue';
   }
 
-  return colorMap[iconName] || 'icon-blue';
+  return colorMap[iconName] || 'text-icon-blue';
 };
 
 export const getDifficultyColor = (difficulty: string): string => {
   const colors: Record<string, string> = {
-    'Beginner': 'icon-green',
-    'Intermediate': 'icon-yellow',
-    'Advanced': 'icon-red',
+    'Beginner': 'text-icon-green',
+    'Intermediate': 'text-icon-yellow',
+    'Advanced': 'text-icon-red',
   };
-  return colors[difficulty] || 'icon-blue';
+  return colors[difficulty] || 'text-icon-blue';
 };
 
 export const getCategoryColor = (category: string): string => {
@@ -77,9 +77,9 @@ export const getCategoryColor = (category: string): string => {
   }, 0);
 
   const colors = [
-    'icon-blue', 'icon-green', 'icon-purple', 'icon-orange',
-    'icon-red', 'icon-teal', 'icon-pink', 'icon-indigo',
-    'icon-yellow', 'icon-cyan'
+    'text-icon-blue', 'text-icon-green', 'text-icon-purple', 'text-icon-orange',
+    'text-icon-red', 'text-icon-teal', 'text-icon-pink', 'text-icon-indigo',
+    'text-icon-yellow', 'text-icon-cyan'
   ];
 
   return colors[Math.abs(hash) % colors.length];
