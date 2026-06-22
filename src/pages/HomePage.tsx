@@ -56,26 +56,30 @@ const HomePage: React.FC = () => {
       <div className="mb-16">
         <h2 className="text-3xl font-bold text-center mb-8">Popular Learning Paths</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {['fullstack_developer', 'uiux_designer', 'database_administrator'].map(pathId => {
-            const path = paths.find(p => p.id === pathId);
-            return path ? <PathCard key={path.id} path={path} /> : null;
-          })}
+          {(() => {
+            const preferredIds = ['fullstack_developer', 'uiux_designer', 'database_administrator'];
+            const resolved = preferredIds.map(id => paths.find(p => p.id === id)).filter(Boolean);
+            const popularPaths = resolved.length > 0 ? resolved : paths.slice(0, 3);
+            return popularPaths.map(path => path ? <PathCard key={path.id} path={path} /> : null);
+          })()}
         </div>
       </div>
 
       <div>
         <h2 className="text-3xl font-bold text-center mb-8">Popular Categories</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {['python', 'django', 'git', 'javascript', 'react', 'docker'].map(catId => {
-            const category = categories.find(c => c.id === catId);
-            if (!category) return null;
-            const resourceCount = resources.filter(r => 
-              Array.isArray(r.category) ? r.category.includes(category.id) : r.category === category.id
-            ).length;
-            return (
-              <CategoryCard key={category.id} category={category} resourceCount={resourceCount} />
-            );
-          })}
+          {(() => {
+            const preferredIds = ['python', 'django', 'git', 'javascript', 'react', 'docker'];
+            const resolved = preferredIds.map(id => categories.find(c => c.id === id)).filter(Boolean);
+            const popularCats = resolved.length > 0 ? resolved : categories.slice(0, 6);
+            return popularCats.map(category => {
+              if (!category) return null;
+              const resourceCount = resources.filter(r =>
+                Array.isArray(r.category) ? r.category.includes(category.id) : r.category === category.id
+              ).length;
+              return <CategoryCard key={category.id} category={category} resourceCount={resourceCount} />;
+            });
+          })()}
         </div>
       </div>
     </div>

@@ -12,6 +12,22 @@ interface ResourceDetailModalProps {
 }
 
 const ResourceDetailModal: React.FC<ResourceDetailModalProps> = ({ resource, onClose, platforms, categories, onToggleCompletion, isCompleted }) => {
+  // Close on Escape key
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
+  // Lock body scroll while modal is open
+  React.useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, []);
+
   const getPlatformTitle = (platformId: string) => {
     const platform = platforms.find(p => p.id === platformId);
     return platform ? platform.title : platformId.charAt(0).toUpperCase() + platformId.slice(1);

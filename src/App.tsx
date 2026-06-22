@@ -37,6 +37,13 @@ const App: React.FC = () => {
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/category/:category" element={<CategoryDetailPage />} />
           <Route path="/progress" element={<ProgressDashboardPage />} />
+          <Route path="*" element={
+            <div className="text-center py-20">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">Page Not Found</h2>
+              <p className="text-lg text-gray-600 mb-8">The page you're looking for doesn't exist.</p>
+              <a href="/" className="bg-primary text-white font-bold py-3 px-8 rounded-full hover:bg-secondary transition-colors">Go Home</a>
+            </div>
+          } />
         </Routes>
       </Layout>
     </>
