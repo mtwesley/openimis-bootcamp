@@ -10,7 +10,6 @@ const __dirname = path.dirname(__filename);
 
 const DATA_DIR = path.join(__dirname, '..', 'data');
 const OUTPUT_PATH = path.join(__dirname, '..', 'public', 'data.json');
-const LEARNING_MD_PATH = path.join(__dirname, '..', 'LEARNING.md');
 
 const CSV_FILES = {
     categories: 'categories.csv',
@@ -39,26 +38,6 @@ function generateResourceId(resource) {
     return hash.digest('hex').substring(0, 8);
 }
 
-// Parse LEARNING.md to extract descriptions for paths
-async function getPathDescriptions() {
-    const descriptions = new Map();
-    try {
-        const content = await fsPromises.readFile(LEARNING_MD_PATH, 'utf-8');
-        const pathRegex = /^###\s+(.+?)\s*\n\*\*Target\*\*:\s(.*?)$/gm;
-        let match;
-        while ((match = pathRegex.exec(content)) !== null) {
-            const title = match[1];
-            const description = match[2];
-            const pathId = title.toLowerCase().replace(/ & /g, ' ').replace(/ /g, '_');
-            descriptions.set(pathId, description);
-        }
-    } catch (error) {
-        console.warn('Could not read LEARNING.md, descriptions will be empty.', error);
-    }
-    return descriptions;
-}
-
-
 async function buildData() {
     console.log('Starting data build...');
 
@@ -68,13 +47,11 @@ async function buildData() {
         platformsData,
         resourcesData,
         pathsData,
-        pathDescriptions
     ] = await Promise.all([
         readCsv(CSV_FILES.categories),
         readCsv(CSV_FILES.platforms),
         readCsv(CSV_FILES.resources),
         readCsv(CSV_FILES.paths),
-        getPathDescriptions(),
     ]);
 
     console.log('Successfully read all source files.');
@@ -101,7 +78,7 @@ async function buildData() {
             pathsMap.set(step.path, {
                 id: step.path,
                 title: step.path_title,
-                description: pathDescriptions.get(step.path) || '',
+                description: '',
                 totalDuration: 0,
                 steps: []
             });
@@ -136,7 +113,42 @@ async function buildData() {
         path.totalDuration = totalDuration;
     }
 
-    // 5. Assemble the final JSON structure
+    // 5. Cross-reference validation
+    const validCategoryIds = new Set(categoriesData.map(c => c.category));
+
+    // Check resource category references
+    for (const r of resourcesData) {
+        if (r.category) {
+            for (const catId of r.category.split(',').map(c => c.trim())) {
+                if (catId && !validCategoryIds.has(catId)) {
+                    console.warn(`WARNING: Resource "${r.title}" references unknown category "${catId}"`);
+                }
+            }
+        }
+    }
+
+    // Check path step category references
+    for (const step of pathsData) {
+        if (step.categories) {
+            for (const catId of step.categories.split(',').map(c => c.trim())) {
+                if (catId && !validCategoryIds.has(catId)) {
+                    console.warn(`WARNING: Path "${step.path_title}" step "${step.step_title}" references unknown category "${catId}"`);
+                }
+            }
+        }
+    }
+
+    // Check for categories with no resources
+    for (const cat of categoriesData) {
+        const hasResources = resources.some(r =>
+            Array.isArray(r.category) ? r.category.includes(cat.category) : r.category === cat.category
+        );
+        if (!hasResources) {
+            console.warn(`WARNING: Category "${cat.category_title}" (${cat.category}) has no resources`);
+        }
+    }
+
+    // 6. Assemble the final JSON structure
     const finalData = {
         platforms: platformsData.map(p => ({ id: p.platform, title: p.title })),
         categories: categoriesData.map(c => ({ id: c.category, title: c.category_title, group: c.group, group_title: c.group_title })),
