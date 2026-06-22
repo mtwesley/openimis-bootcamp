@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useData } from '../contexts/DataContext';
 import { useDifficulty } from '../contexts/DifficultyContext';
 import { useProgress } from '../contexts/ProgressContext';
@@ -9,12 +9,26 @@ import ResourceDetailModal from '../components/shared/ResourceDetailModal';
 import { getDifficultyLevels } from '../utils/difficulty';
 import type { Resource } from '../types';
 
+const FORMAT_META: { [key: string]: { label: string; icon: string } } = {
+  video: { label: 'Videos', icon: 'fab fa-youtube' },
+  course: { label: 'Courses', icon: 'fas fa-graduation-cap' },
+  playlist: { label: 'Playlists', icon: 'fas fa-list' },
+};
+
 const ResourceBrowserPage: React.FC = () => {
   const { resources, categories, platforms } = useData();
   const { difficulty } = useDifficulty();
   const { completedResources, toggleResourceCompletion } = useProgress();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [modalResource, setModalResource] = useState<Resource | null>(null);
+
+  // Initialize format selection from URL query param (?format=video)
+  const [selectedFormats, setSelectedFormats] = useState<string[]>(() => {
+    if (typeof window === 'undefined') return [];
+    const params = new URLSearchParams(window.location.search);
+    const fmt = params.get('format');
+    return fmt ? [fmt] : [];
+  });
 
   const handleCategoryChange = (categoryId: string) => {
     setSelectedCategories(prev =>
@@ -24,6 +38,28 @@ const ResourceBrowserPage: React.FC = () => {
     );
   };
 
+  const handleFormatChange = (formatId: string) => {
+    setSelectedFormats(prev =>
+      prev.includes(formatId)
+        ? prev.filter(id => id !== formatId)
+        : [...prev, formatId]
+    );
+  };
+
+  // Build format options with counts from data
+  const formatOptions = useMemo(() => {
+    const counts: { [key: string]: number } = {};
+    resources.forEach(r => { counts[r.format] = (counts[r.format] || 0) + 1; });
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .map(([id, count]) => ({
+        id,
+        label: FORMAT_META[id]?.label || id.charAt(0).toUpperCase() + id.slice(1),
+        icon: FORMAT_META[id]?.icon || 'fas fa-file-alt',
+        count,
+      }));
+  }, [resources]);
+
   const difficultyLevels = getDifficultyLevels(difficulty);
 
   const filteredResources = resources.filter(resource => {
@@ -32,7 +68,8 @@ const ResourceBrowserPage: React.FC = () => {
       const cats = Array.isArray(resource.category) ? resource.category : [resource.category];
       return cats.includes(cat);
     });
-    return difficultyMatch && categoryMatch;
+    const formatMatch = selectedFormats.length === 0 || selectedFormats.includes(resource.format);
+    return difficultyMatch && categoryMatch && formatMatch;
   });
 
   return (
@@ -56,6 +93,9 @@ const ResourceBrowserPage: React.FC = () => {
             categories={categories}
             selectedCategories={selectedCategories}
             onCategoryChange={handleCategoryChange}
+            formats={formatOptions}
+            selectedFormats={selectedFormats}
+            onFormatChange={handleFormatChange}
           />
         </aside>
         <main className="lg:w-3/4">

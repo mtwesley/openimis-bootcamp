@@ -27,6 +27,11 @@ const HomePage: React.FC = () => {
             <Link to="/categories" className="bg-blue-900/50 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300">Browse Categories</Link>
             <Link to="/resources" className="bg-blue-900/50 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300">Browse All Resources</Link>
           </div>
+          <div className="mt-4 flex justify-center gap-3 flex-wrap">
+            <Link to="/resources?format=video" className="bg-white/20 text-white font-semibold py-2 px-6 rounded-full border border-white/30 hover:bg-white/30 transition-colors duration-200"><i className="fab fa-youtube mr-2"></i>Browse Videos</Link>
+            <Link to="/resources?format=course" className="bg-white/20 text-white font-semibold py-2 px-6 rounded-full border border-white/30 hover:bg-white/30 transition-colors duration-200"><i className="fas fa-graduation-cap mr-2"></i>Browse Courses</Link>
+            <Link to="/resources?format=playlist" className="bg-white/20 text-white font-semibold py-2 px-6 rounded-full border border-white/30 hover:bg-white/30 transition-colors duration-200"><i className="fas fa-list mr-2"></i>Browse Playlists</Link>
+          </div>
         </div>
       </div>
 
@@ -51,6 +56,30 @@ const HomePage: React.FC = () => {
           <h3 className="text-2xl font-bold">3 Skill Levels</h3>
           <p className="text-gray-600 dark:text-gray-400">Beginner to Advanced</p>
         </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center mb-16">
+        {(() => {
+          const formatMeta: { [key: string]: { label: string; icon: string; description: string } } = {
+            video: { label: 'Videos', icon: 'fab fa-youtube', description: 'Watch and learn from experts' },
+            course: { label: 'Courses', icon: 'fas fa-graduation-cap', description: 'Structured learning programs' },
+            playlist: { label: 'Playlists', icon: 'fas fa-list', description: 'Curated video series' },
+          };
+          const counts: { [key: string]: number } = {};
+          resources.forEach(r => { counts[r.format] = (counts[r.format] || 0) + 1; });
+          return ['video', 'course', 'playlist'].map(fmt => {
+            const meta = formatMeta[fmt];
+            const count = counts[fmt] || 0;
+            if (count === 0) return null;
+            return (
+              <Link key={fmt} to={`/resources?format=${fmt}`} className="bg-card-background p-6 rounded-lg shadow-lg cursor-pointer transform hover:-translate-y-1 transition-transform border border-gray-200 hover:border-primary/50">
+                <i className={`${meta.icon} text-4xl ${getIconColor(meta.icon)} mb-4`}></i>
+                <h3 className="text-2xl font-bold">{count} {meta.label}</h3>
+                <p className="text-gray-600 dark:text-gray-400">{meta.description}</p>
+              </Link>
+            );
+          });
+        })()}
       </div>
 
       <div className="mb-16">

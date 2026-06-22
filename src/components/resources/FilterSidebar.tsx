@@ -1,13 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import type { Category } from '../../types';
 
+interface FormatOption {
+  id: string;
+  label: string;
+  icon: string;
+  count: number;
+}
+
 interface FilterSidebarProps {
   categories: Category[];
   selectedCategories: string[];
   onCategoryChange: (categoryId: string) => void;
+  formats: FormatOption[];
+  selectedFormats: string[];
+  onFormatChange: (formatId: string) => void;
 }
 
-const FilterSidebar: React.FC<FilterSidebarProps> = ({ categories, selectedCategories, onCategoryChange }) => {
+const FilterSidebar: React.FC<FilterSidebarProps> = ({ categories, selectedCategories, onCategoryChange, formats, selectedFormats, onFormatChange }) => {
   const groupDisplayNames = React.useMemo(() => {
     return categories.reduce((acc, category) => {
       if (category.group && category.group_title && !acc[category.group]) {
@@ -64,6 +74,26 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ categories, selectedCateg
         <p className="text-sm text-gray-600">Refine your search</p>
       </div>
       <div className="space-y-6">
+        {formats.length > 0 && (
+          <div className="border-b border-gray-100 pb-4">
+            <h4 className="text-lg font-semibold text-primary mb-4">Content Type</h4>
+            <div className="space-y-3">
+              {formats.map(fmt => (
+                <label key={fmt.id} className="flex items-center space-x-3 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={selectedFormats.includes(fmt.id)}
+                    onChange={() => onFormatChange(fmt.id)}
+                    className="form-checkbox h-5 w-5 text-primary rounded bg-gray-100 border-gray-300 focus:ring-primary focus:ring-offset-0 transition-colors"
+                  />
+                  <i className={`${fmt.icon} text-gray-400 text-sm`}></i>
+                  <span className="text-gray-700 group-hover:text-primary transition-colors">{fmt.label}</span>
+                  <span className="text-xs text-gray-400 ml-auto">{fmt.count}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
         {sortedGroups.map(([group, cats]) => (
           <div key={group} className="border-b border-gray-100 pb-4 last:border-b-0">
             <button
