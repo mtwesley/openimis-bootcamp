@@ -14,28 +14,12 @@ const App: React.FC = () => {
     "@context": "https://schema.org",
     "@type": "EducationalOrganization",
     "name": "OpenIMIS Bootcamp",
-    "description": "A comprehensive learning platform with structured career paths and curated resources for building skills in modern web development.",
+    "description": "A curated collection of free learning resources and structured career paths for OpenIMIS development teams.",
     "url": "https://openimis-bootcamp.netlify.app",
     "logo": "https://openimis-bootcamp.netlify.app/favicon.svg",
     "sameAs": [
       "https://github.com/mtwesley/openimis-bootcamp"
-    ],
-    "educationalCredentialAwarded": "Certificate of Completion",
-    "hasOfferCatalog": {
-      "@type": "OfferCatalog",
-      "name": "Learning Paths",
-      "itemListElement": [
-        {
-          "@type": "Course",
-          "name": "Full-Stack Web Development",
-          "description": "Complete path from beginner to advanced web developer",
-          "provider": {
-            "@type": "EducationalOrganization",
-            "name": "OpenIMIS Bootcamp"
-          }
-        }
-      ]
-    }
+    ]
   };
 
   return (

@@ -11,8 +11,12 @@ const ProgressContext = createContext<ProgressContextType | undefined>(undefined
 
 export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [completedResources, setCompletedResources] = useState<string[]>(() => {
-    const savedProgress = localStorage.getItem('openimis_progress');
-    return savedProgress ? JSON.parse(savedProgress) : [];
+    try {
+      const savedProgress = localStorage.getItem('openimis_progress');
+      return savedProgress ? JSON.parse(savedProgress) : [];
+    } catch {
+      return [];
+    }
   });
 
   useEffect(() => {

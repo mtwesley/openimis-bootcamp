@@ -5,9 +5,10 @@ import { getIconColor } from '../../utils/iconColors';
 
 interface PathCardProps {
   path: Path;
+  filteredDuration?: number;
 }
 
-const PathCard: React.FC<PathCardProps> = ({ path }) => {
+const PathCard: React.FC<PathCardProps> = ({ path, filteredDuration }) => {
   return (
     <Link to={`/path/${path.id}`} className="block bg-card-background rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 flex flex-col border border-gray-200 hover:border-primary/50">
       <div className="p-6 flex-grow">
@@ -20,7 +21,7 @@ const PathCard: React.FC<PathCardProps> = ({ path }) => {
             <div className="flex items-center mt-1">
               <span className="text-sm text-primary font-medium">{path.steps.length} steps</span>
               <span className="mx-2 text-gray-400">•</span>
-              <span className="text-sm text-gray-600">{path.totalDuration} hours</span>
+              <span className="text-sm text-gray-600">{filteredDuration !== undefined ? filteredDuration : path.totalDuration} hours</span>
             </div>
           </div>
         </div>

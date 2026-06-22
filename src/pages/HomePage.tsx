@@ -33,17 +33,17 @@ const HomePage: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-center mb-16">
         <Link to="/resources" className="bg-card-background p-6 rounded-lg shadow-lg cursor-pointer transform hover:-translate-y-1 transition-transform">
           <i className={`fas fa-book text-4xl ${getIconColor('fas fa-book')} mb-4`}></i>
-          <h3 className="text-2xl font-bold">200+ Resources</h3>
+          <h3 className="text-2xl font-bold">{resources.length} Resources</h3>
           <p className="text-gray-600 dark:text-gray-400">Curated from top platforms</p>
         </Link>
         <Link to="/paths" className="bg-card-background p-6 rounded-lg shadow-lg cursor-pointer transform hover:-translate-y-1 transition-transform">
           <i className={`fas fa-road text-4xl ${getIconColor('fas fa-road')} mb-4`}></i>
-          <h3 className="text-2xl font-bold">10+ Paths</h3>
+          <h3 className="text-2xl font-bold">{paths.length} Paths</h3>
           <p className="text-gray-600 dark:text-gray-400">To advance your career</p>
         </Link>
         <Link to="/categories" className="bg-card-background p-6 rounded-lg shadow-lg cursor-pointer transform hover:-translate-y-1 transition-transform">
           <i className={`fas fa-tags text-4xl ${getIconColor('fas fa-tags')} mb-4`}></i>
-          <h3 className="text-2xl font-bold">40+ Categories</h3>
+          <h3 className="text-2xl font-bold">{categories.length} Categories</h3>
           <p className="text-gray-600 dark:text-gray-400">Organized by topic</p>
         </Link>
         <div className="bg-card-background p-6 rounded-lg shadow-lg md:col-span-2 lg:col-span-1 mx-auto w-full max-w-sm lg:max-w-none">

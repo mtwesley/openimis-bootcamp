@@ -35,6 +35,26 @@ const PathDetailPage: React.FC = () => {
     });
   }).sort((a, b) => a.rank - b.rank);
 
+  // Compute duration from difficulty-filtered resources only
+  const filteredDuration = (() => {
+    const resourceIds = new Set<string>();
+    path.steps.forEach(step => {
+      step.categories.forEach(catId => {
+        resources.forEach(res => {
+          if ((Array.isArray(res.category) ? res.category.includes(catId) : res.category === catId) && difficultyLevels.includes(res.difficulty)) {
+            resourceIds.add(res.id);
+          }
+        });
+      });
+    });
+    let total = 0;
+    resourceIds.forEach(id => {
+      const res = resources.find(r => r.id === id);
+      if (res) total += res.duration;
+    });
+    return total;
+  })();
+
   const handleStepClick = (stepIndex: number) => {
     setActiveStepIndex(stepIndex);
   };
@@ -88,7 +108,7 @@ const PathDetailPage: React.FC = () => {
           <div className="flex justify-center items-center space-x-6 text-sm text-gray-600">
             <span className="flex items-center">
               <i className={`fas fa-clock ${getIconColor('fas fa-clock')} mr-2`}></i>
-              {path.totalDuration} hours total
+              {filteredDuration} hours total
             </span>
             <span className="flex items-center">
               <i className={`fas fa-list-ol ${getIconColor('fas fa-list-ol')} mr-2`}></i>

@@ -45,9 +45,24 @@ const LearningPathsPage: React.FC = () => {
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {filteredPaths.map(path => (
-          <PathCard key={path.id} path={path} />
-        ))}
+        {filteredPaths.map(path => {
+          const resourceIds = new Set<string>();
+          path.steps.forEach(step => {
+            step.categories.forEach(catId => {
+              resources.forEach(res => {
+                if ((Array.isArray(res.category) ? res.category.includes(catId) : res.category === catId) && difficultyLevels.includes(res.difficulty)) {
+                  resourceIds.add(res.id);
+                }
+              });
+            });
+          });
+          let duration = 0;
+          resourceIds.forEach(id => {
+            const res = resources.find(r => r.id === id);
+            if (res) duration += res.duration;
+          });
+          return <PathCard key={path.id} path={path} filteredDuration={duration} />;
+        })}
       </div>
     </div>
   );
