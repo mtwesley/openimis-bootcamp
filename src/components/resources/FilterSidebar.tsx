@@ -37,21 +37,26 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ categories, selectedCateg
 
   const sortedGroups = Object.entries(groupedCategories).sort(([a], [b]) => (groupDisplayNames[a] || a).localeCompare(groupDisplayNames[b] || b));
 
+  const isMobile = () => typeof window !== 'undefined' && window.innerWidth < 1024;
+
+  // Whole panel collapsed on mobile by default
+  const [panelOpen, setPanelOpen] = useState<boolean>(() => !isMobile());
+
   // Collapsed state per group. Desktop: all expanded. Mobile: all collapsed.
-  const isMobile = () => typeof window !== 'undefined' && window.innerWidth < 768;
   const [collapsed, setCollapsed] = useState<{ [key: string]: boolean }>(() => {
     const initial: { [key: string]: boolean } = {};
     sortedGroups.forEach(([group]) => { initial[group] = isMobile(); });
     return initial;
   });
 
-  // Update collapsed state on resize crossing the mobile/desktop threshold
+  // Update states on resize crossing the mobile/desktop threshold
   useEffect(() => {
     let wasMobile = isMobile();
     const handleResize = () => {
       const nowMobile = isMobile();
       if (nowMobile !== wasMobile) {
         wasMobile = nowMobile;
+        setPanelOpen(!nowMobile);
         setCollapsed(prev => {
           const next: { [key: string]: boolean } = {};
           Object.keys(prev).forEach(g => { next[g] = nowMobile; });
@@ -69,11 +74,17 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ categories, selectedCateg
 
   return (
     <div className="bg-card-background p-6 rounded-xl shadow-lg border border-gray-200">
-      <div className="mb-6">
-        <h3 className="text-2xl font-bold text-gray-900 mb-2">Filter & Sort</h3>
-        <p className="text-sm text-gray-600">Refine your search</p>
-      </div>
-      <div className="space-y-6">
+      <button
+        onClick={() => setPanelOpen(prev => !prev)}
+        className="flex items-center justify-between w-full text-left cursor-pointer"
+      >
+        <div>
+          <h3 className="text-2xl font-bold text-gray-900 mb-1">Filter & Sort</h3>
+          <p className="text-sm text-gray-600">Refine your search</p>
+        </div>
+        <i className={`fas fa-sliders text-gray-400 text-lg transition-transform duration-200 ${panelOpen ? 'text-primary' : ''}`}></i>
+      </button>
+      {panelOpen && <div className="space-y-6 mt-6">
         {formats.length > 0 && (
           <div className="border-b border-gray-100 pb-4">
             <h4 className="text-lg font-semibold text-primary mb-4">Content Type</h4>
@@ -120,7 +131,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ categories, selectedCateg
             )}
           </div>
         ))}
-      </div>
+      </div>}
     </div>
   );
 };
