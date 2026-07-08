@@ -28,30 +28,30 @@ const HomePage: React.FC = () => {
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="text-center mb-16">
-        <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg py-20 px-4">
+        <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-t-lg py-20 px-4">
           <h1 className="text-4xl md:text-6xl font-extrabold text-white">Master OpenIMIS Development</h1>
           <p className="mt-4 text-lg md:text-xl text-blue-100 max-w-2xl mx-auto">A curated collection of free resources to take you from beginner to professional contributor.</p>
-          <form onSubmit={handleHeroSearch} className="mt-8 max-w-xl mx-auto relative">
-            <i className="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-            <input
-              type="text"
-              value={heroSearch}
-              onChange={(e) => setHeroSearch(e.target.value)}
-              placeholder="Search for resources, topics, or creators..."
-              className="w-full pl-12 pr-4 py-4 rounded-full text-gray-900 bg-white shadow-lg focus:outline-none focus:ring-4 focus:ring-white/30 placeholder-gray-400"
-            />
-          </form>
-          <div className="mt-6 flex justify-center gap-4 flex-wrap">
+          <div className="mt-8 flex justify-center gap-4 flex-wrap">
             <Link to="/paths" className="bg-white text-blue-600 font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300">Start a Learning Path</Link>
             <Link to="/categories" className="bg-blue-900/50 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300">Browse Categories</Link>
             <Link to="/resources" className="bg-blue-900/50 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300">Browse All Resources</Link>
           </div>
-          <div className="mt-4 flex justify-center gap-3 flex-wrap">
-            <Link to="/resources?format=video" className="bg-white/20 text-white font-semibold py-2 px-6 rounded-full border border-white/30 hover:bg-white/30 transition-colors duration-200"><i className="fab fa-youtube mr-2"></i>Browse Videos</Link>
-            <Link to="/resources?format=course" className="bg-white/20 text-white font-semibold py-2 px-6 rounded-full border border-white/30 hover:bg-white/30 transition-colors duration-200"><i className="fas fa-graduation-cap mr-2"></i>Browse Courses</Link>
-            <Link to="/resources?format=playlist" className="bg-white/20 text-white font-semibold py-2 px-6 rounded-full border border-white/30 hover:bg-white/30 transition-colors duration-200"><i className="fas fa-list mr-2"></i>Browse Playlists</Link>
-          </div>
         </div>
+        <form onSubmit={handleHeroSearch} className="bg-card-background p-6 rounded-b-lg shadow-lg flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+        <div className="relative flex-1">
+          <i className="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <input
+            type="text"
+            value={heroSearch}
+            onChange={(e) => setHeroSearch(e.target.value)}
+            placeholder="Search for resources, topics, or creators..."
+            className="w-full pl-12 pr-4 py-4 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+          />
+        </div>
+        <button type="submit" className="bg-primary text-white font-bold py-4 px-8 rounded-lg hover:bg-secondary transition-colors cursor-pointer shrink-0">
+          Search
+        </button>
+        </form>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-center mb-16">
