@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import Fuse from 'fuse.js';
+import Fuse, { type IFuseOptions } from 'fuse.js';
 import { useData } from '../contexts/DataContext';
 import { useDifficulty } from '../contexts/DifficultyContext';
 import { useProgress } from '../contexts/ProgressContext';
@@ -16,7 +16,7 @@ const FORMAT_META: { [key: string]: { label: string; icon: string } } = {
   playlist: { label: 'Playlists', icon: 'fas fa-list' },
 };
 
-const FUSE_OPTIONS: Fuse.IFuseOptions<Resource> = {
+const FUSE_OPTIONS: IFuseOptions<Resource> = {
   keys: [
     { name: 'title', weight: 3 },
     { name: 'organization', weight: 2 },
