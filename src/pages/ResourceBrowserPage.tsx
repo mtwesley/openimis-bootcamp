@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import Fuse from 'fuse.js';
 import { useData } from '../contexts/DataContext';
 import { useDifficulty } from '../contexts/DifficultyContext';
 import { useProgress } from '../contexts/ProgressContext';
@@ -15,6 +16,18 @@ const FORMAT_META: { [key: string]: { label: string; icon: string } } = {
   playlist: { label: 'Playlists', icon: 'fas fa-list' },
 };
 
+const FUSE_OPTIONS: Fuse.IFuseOptions<Resource> = {
+  keys: [
+    { name: 'title', weight: 3 },
+    { name: 'organization', weight: 2 },
+    { name: 'category', weight: 2 },
+    { name: 'description', weight: 1 },
+  ],
+  threshold: 0.4,
+  includeScore: true,
+  ignoreLocation: true,
+};
+
 const ResourceBrowserPage: React.FC = () => {
   const { resources, categories, platforms } = useData();
   const { difficulty } = useDifficulty();
@@ -22,13 +35,22 @@ const ResourceBrowserPage: React.FC = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [modalResource, setModalResource] = useState<Resource | null>(null);
 
-  // Initialize format selection from URL query param (?format=video)
+  // Initialize from URL query params (?format=video&q=django)
   const [selectedFormats, setSelectedFormats] = useState<string[]>(() => {
     if (typeof window === 'undefined') return [];
     const params = new URLSearchParams(window.location.search);
     const fmt = params.get('format');
     return fmt ? [fmt] : [];
   });
+
+  const [searchQuery, setSearchQuery] = useState<string>(() => {
+    if (typeof window === 'undefined') return '';
+    const params = new URLSearchParams(window.location.search);
+    return params.get('q') || '';
+  });
+
+  // Build Fuse index when resources change
+  const fuse = useMemo(() => new Fuse(resources, FUSE_OPTIONS), [resources]);
 
   const handleCategoryChange = (categoryId: string) => {
     setSelectedCategories(prev =>
@@ -62,15 +84,23 @@ const ResourceBrowserPage: React.FC = () => {
 
   const difficultyLevels = getDifficultyLevels(difficulty);
 
-  const filteredResources = resources.filter(resource => {
-    const difficultyMatch = difficultyLevels.includes(resource.difficulty);
-    const categoryMatch = selectedCategories.length === 0 || selectedCategories.some(cat => {
-      const cats = Array.isArray(resource.category) ? resource.category : [resource.category];
-      return cats.includes(cat);
+  const filteredResources = useMemo(() => {
+    // Step 1: Apply fuzzy search if there's a query
+    const searchBase = searchQuery.trim()
+      ? fuse.search(searchQuery.trim()).map(result => result.item)
+      : resources;
+
+    // Step 2: Apply checkbox filters
+    return searchBase.filter(resource => {
+      const difficultyMatch = difficultyLevels.includes(resource.difficulty);
+      const categoryMatch = selectedCategories.length === 0 || selectedCategories.some(cat => {
+        const cats = Array.isArray(resource.category) ? resource.category : [resource.category];
+        return cats.includes(cat);
+      });
+      const formatMatch = selectedFormats.length === 0 || selectedFormats.includes(resource.format);
+      return difficultyMatch && categoryMatch && formatMatch;
     });
-    const formatMatch = selectedFormats.length === 0 || selectedFormats.includes(resource.format);
-    return difficultyMatch && categoryMatch && formatMatch;
-  });
+  }, [searchQuery, fuse, resources, difficultyLevels, selectedCategories, selectedFormats]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -80,7 +110,9 @@ const ResourceBrowserPage: React.FC = () => {
             Browse Resources
           </h1>
           <p className="text-lg text-gray-600">
-            Discover {resources.length}+ curated learning resources
+            {searchQuery || selectedCategories.length > 0 || selectedFormats.length > 0
+              ? `Showing ${filteredResources.length} of ${resources.length} resources`
+              : `Discover ${resources.length} curated learning resources`}
           </p>
         </div>
         <div className="flex items-center space-x-4 mt-4 md:mt-0">
@@ -96,6 +128,8 @@ const ResourceBrowserPage: React.FC = () => {
             formats={formatOptions}
             selectedFormats={selectedFormats}
             onFormatChange={handleFormatChange}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
           />
         </aside>
         <main className="lg:w-3/4">

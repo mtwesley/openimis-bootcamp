@@ -15,9 +15,11 @@ interface FilterSidebarProps {
   formats: FormatOption[];
   selectedFormats: string[];
   onFormatChange: (formatId: string) => void;
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
 }
 
-const FilterSidebar: React.FC<FilterSidebarProps> = ({ categories, selectedCategories, onCategoryChange, formats, selectedFormats, onFormatChange }) => {
+const FilterSidebar: React.FC<FilterSidebarProps> = ({ categories, selectedCategories, onCategoryChange, formats, selectedFormats, onFormatChange, searchQuery, onSearchChange }) => {
   const groupDisplayNames = React.useMemo(() => {
     return categories.reduce((acc, category) => {
       if (category.group && category.group_title && !acc[category.group]) {
@@ -74,6 +76,24 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ categories, selectedCateg
 
   return (
     <div className="bg-card-background p-6 rounded-xl shadow-lg border border-gray-200">
+      <div className="relative mb-6">
+        <i className="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => onSearchChange(e.target.value)}
+          placeholder="Search resources..."
+          className="w-full pl-10 pr-10 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+        />
+        {searchQuery && (
+          <button
+            onClick={() => onSearchChange('')}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
+          >
+            <i className="fas fa-times text-sm"></i>
+          </button>
+        )}
+      </div>
       <button
         onClick={() => setPanelOpen(prev => !prev)}
         className="flex items-center justify-between w-full text-left cursor-pointer"

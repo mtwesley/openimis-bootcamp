@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
 import PathCard from '../components/paths/PathCard';
 import CategoryCard from '../components/categories/CategoryCard';
@@ -7,6 +7,15 @@ import { getIconColor } from '../utils/iconColors';
 
 const HomePage: React.FC = () => {
   const { loading, error, paths, categories, resources } = useData();
+  const navigate = useNavigate();
+  const [heroSearch, setHeroSearch] = useState('');
+
+  const handleHeroSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (heroSearch.trim()) {
+      navigate(`/resources?q=${encodeURIComponent(heroSearch.trim())}`);
+    }
+  };
 
   if (loading) {
     return <div className="text-center p-8">Loading...</div>;
@@ -22,7 +31,17 @@ const HomePage: React.FC = () => {
         <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg py-20 px-4">
           <h1 className="text-4xl md:text-6xl font-extrabold text-white">Master OpenIMIS Development</h1>
           <p className="mt-4 text-lg md:text-xl text-blue-100 max-w-2xl mx-auto">A curated collection of free resources to take you from beginner to professional contributor.</p>
-          <div className="mt-8 flex justify-center gap-4 flex-wrap">
+          <form onSubmit={handleHeroSearch} className="mt-8 max-w-xl mx-auto relative">
+            <i className="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <input
+              type="text"
+              value={heroSearch}
+              onChange={(e) => setHeroSearch(e.target.value)}
+              placeholder="Search for resources, topics, or creators..."
+              className="w-full pl-12 pr-4 py-4 rounded-full text-gray-900 bg-white shadow-lg focus:outline-none focus:ring-4 focus:ring-white/30 placeholder-gray-400"
+            />
+          </form>
+          <div className="mt-6 flex justify-center gap-4 flex-wrap">
             <Link to="/paths" className="bg-white text-blue-600 font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300">Start a Learning Path</Link>
             <Link to="/categories" className="bg-blue-900/50 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300">Browse Categories</Link>
             <Link to="/resources" className="bg-blue-900/50 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300">Browse All Resources</Link>
